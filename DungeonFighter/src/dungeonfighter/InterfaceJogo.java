@@ -14,5 +14,7 @@ public class InterfaceJogo extends JFrame {
         Tabuleiro tabuleiro = new Tabuleiro(5, 5, 3);
         tabuleiro.preencheTabuleiro();
         tabuleiro.printTabuleiro();
+
+        // 
     }
 }

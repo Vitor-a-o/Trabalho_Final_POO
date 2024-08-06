@@ -17,7 +17,7 @@ public abstract class Heroi extends Personagem {
     public Heroi(int ataque, int defesa, int saude, String nome){
         super(ataque, defesa, saude, nome);
         this.quantidadeElixir = 0;
-        this.maxElixir = 3;
+        this.maxElixir = 2;
         // defini arbitrariamente que o personagem carrega no máximo 3 elixir
         // era pra ser uma quantidade E, então acho que é pra gente definir mesmo
         this.dicas = 3;
