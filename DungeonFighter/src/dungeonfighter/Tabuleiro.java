@@ -12,27 +12,66 @@ public class Tabuleiro {
     private int[][] tabuleiro;
     private int comprimento;
     private int largura;
-    private Armadilha armadilha;
-    private Heroi heroi;
-    private Monstro monstro;
+    // vazio vai ser denotado por 0
+    // heroi vai ser denotado por 1
+    // armadilha perda fixa vai ser denotada por 2 e perda aleatoria por 3
+    private int nArmadilhas;
+    // monstro normal vai ser denotado por 4 e monstro Chefao por 5
+    private int nMonstros;
 
-    public Tabuleiro(Heroi heroi) {
+    public Tabuleiro(int nArmadilhas, int nMonstros) {
         this.comprimento = 10;
         this.largura = 5;
-        this.heroi = heroi;
         this.tabuleiro = new int[comprimento][largura];
-
+        this.nArmadilhas = nArmadilhas;
+        this.nMonstros = nMonstros;
     }
 
     public void preencheTabuleiro() {
+        this.tabuleiro[0][2] = 1; // posicao inicial do heroi
+
+        // preenche tabuleiro com vazio
         for (int i = 0; i < comprimento; i++) {
             for (int j = 0; j < largura; j++) {
-                tabuleiro[i][j] = 0;
+                if (tabuleiro[i][j] != 1) {
+                    tabuleiro[i][j] = 0;
+                }
+            }
+        }
+
+        // preenche tabuleiro com armadilhas
+        for (int i = 0; i < nArmadilhas; i++) {
+            int x = (int) (Math.random() * comprimento);
+            int y = (int) (Math.random() * largura);
+            if (tabuleiro[x][y] == 0) {
+                tabuleiro[x][y] = (int) (Math.random() * 2 + 2);
+            } else {
+                i--;
+            }
+        }
+
+        // preenche tabuleiro com monstros
+        for (int i = 0; i < nMonstros; i++) {
+            int x = (int) (Math.random() * comprimento);
+            int y = (int) (Math.random() * largura);
+            if (tabuleiro[x][y] == 0) {
+                tabuleiro[x][y] = (int) (Math.random() * 2 + 4);
+            } else {
+                i--;
             }
         }
     }
 
     public int[][] getTabuleiro() {
         return tabuleiro;
+    }
+
+    public void printTabuleiro() {
+        for (int i = 0; i < comprimento; i++) {
+            for (int j = 0; j < largura; j++) {
+                System.out.print(tabuleiro[i][j] + " ");
+            }
+            System.out.println();
+        }
     }
 }
