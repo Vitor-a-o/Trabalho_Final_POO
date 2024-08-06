@@ -11,6 +11,6 @@ public class InterfaceJogo extends JFrame {
     }
     
     public static void main(String[] args) {
-        InterfaceJogo jogo = new InterfaceJogo();
+        
     }
 }

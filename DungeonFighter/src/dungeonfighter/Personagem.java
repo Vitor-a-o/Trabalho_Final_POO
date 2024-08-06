@@ -14,7 +14,7 @@ public abstract class Personagem {
     private int saude;
     private int vida;
     private int vidaAtual;
-    private String nome;
+    public String nome;
     private boolean vivo;
     
     public Personagem(int ataque, int defesa, int saude, String nome){

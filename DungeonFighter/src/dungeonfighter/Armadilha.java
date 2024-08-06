@@ -13,7 +13,10 @@ public abstract class Armadilha {
     // a gente que decide quantas armadilhas vão ter no tabuleiro
     // elas não ficam visiveis pro jogador
     
-    public abstract void diminuiVida(Personagem p);
+    public void diminuiVida(Personagem p){
+        p.setVidaAtual(p.getVidaAtual() - pontosDeVida);
+        if(p.getVidaAtual() < 0) p.setVivo(false);
+    }
     
     public int getPontosDeVida(){
         return pontosDeVida;
