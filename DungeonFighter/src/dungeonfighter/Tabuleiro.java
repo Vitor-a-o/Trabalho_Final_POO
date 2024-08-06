@@ -9,5 +9,6 @@ package dungeonfighter;
  * @author Duda
  */
 public class Tabuleiro {
+    private Object[][] tabuleiro;
     
 }

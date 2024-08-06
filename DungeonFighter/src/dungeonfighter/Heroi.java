@@ -8,7 +8,8 @@ package dungeonfighter;
  *
  * @author Duda
  */
-public class Heroi extends Personagem {
+
+public abstract class Heroi extends Personagem {
     private int quantidadeElixir;
     private int maxElixir;
     private int dicas; // para evitar as armadilhas
@@ -31,12 +32,19 @@ public class Heroi extends Personagem {
         }
     }
     
-    public void habilidadeEspecial(){
+    abstract void habilidadeEspecial();
         // a ser implementada nas subclasses
         // SO PODE SER USADA UMA VEZ POR BATALHA
-    }
+
     
     public void movimentar(){
         // implementar
+    }
+
+    // incrementa a quantidade de elixir
+    public void incrementaElixir(){
+        if(quantidadeElixir < maxElixir){
+            quantidadeElixir++;
+        }
     }
 }

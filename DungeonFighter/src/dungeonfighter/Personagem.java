@@ -8,7 +8,7 @@ package dungeonfighter;
  *
  * @author Duda
  */
-public class Personagem {
+public abstract class Personagem {
     private int ataque;
     private int defesa;
     private int saude;
