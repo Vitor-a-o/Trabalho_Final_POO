@@ -10,6 +10,8 @@ public class InterfaceJogo extends JFrame {
 //     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 //     setVisible(true);
 // }
+/*
+    Teste do tabuleiro:
     public static void main(String[] args) {
         Tabuleiro tabuleiro = new Tabuleiro(5, 5, 3);
         tabuleiro.preencheTabuleiro();
@@ -17,4 +19,6 @@ public class InterfaceJogo extends JFrame {
 
         // 
     }
+*/
+    
 }

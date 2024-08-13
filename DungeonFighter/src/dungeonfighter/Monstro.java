@@ -8,7 +8,7 @@ package dungeonfighter;
  *
  * @author Duda
  */
-public class Monstro extends Personagem {
+public abstract class Monstro extends Personagem {
     
     public Monstro(int ataque, int defesa, int saude, String nome){
         super(ataque, defesa, saude, nome);

@@ -12,9 +12,9 @@ public abstract class Personagem {
     private int ataque;
     private int defesa;
     private int saude;
-    private int vida;
+    private int vidaTotal;
     private int vidaAtual;
-    public String nome;
+    private String nome;
     private boolean vivo;
     
     public Personagem(int ataque, int defesa, int saude, String nome){
@@ -22,8 +22,8 @@ public abstract class Personagem {
         this.defesa = defesa;
         this.saude = saude;
         this.nome = nome;
-        this.vida = saude + 10; // os pontos de vida são Y+Saude
-        this.vidaAtual = vida;
+        this.vidaTotal = saude + 10; // os pontos de vida são Y+Saude
+        this.vidaAtual = vidaTotal;
         this.vivo = true;
     }
     
@@ -43,8 +43,8 @@ public abstract class Personagem {
         return nome;
     }
     
-    public int getVida(){
-        return vida;
+    public int getVidaTotal(){
+        return vidaTotal;
     }
     
     public int getVidaAtual(){
@@ -71,8 +71,8 @@ public abstract class Personagem {
         this.nome = nome;
     }
     
-    public void setVida(int vida){
-        this.vida = vida;
+    public void setVidaTotal(int vidaTotal){
+        this.vidaTotal = vidaTotal;
     }
     
     public void setVidaAtual(int vidaAtual){
@@ -83,15 +83,4 @@ public abstract class Personagem {
         this.vivo = vivo;
     }
     
-    public void Atacar(){
-        
-    }
-    
-    public void Defender(){
-        
-    }
-    
-    public void Recuperar(){
-        
-    }
 }

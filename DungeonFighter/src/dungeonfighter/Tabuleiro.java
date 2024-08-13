@@ -22,8 +22,8 @@ public class Tabuleiro {
     private int nElixir;
 
     public Tabuleiro(int nArmadilhas, int nMonstros, int nElixir) {
-        this.comprimento = 10;
-        this.largura = 5;
+        this.comprimento = 5;
+        this.largura = 10;
         this.tabuleiro = new int[comprimento][largura];
         this.nArmadilhas = nArmadilhas;
         this.nMonstros = nMonstros;
@@ -39,15 +39,15 @@ public class Tabuleiro {
             }
         }
 
-        this.tabuleiro[0][2] = 1; // posicao inicial do heroi
-        this.tabuleiro[9][2] = 5; // posicao do Chefao
+        this.tabuleiro[0][4] = 1; // posicao inicial do heroi
+        this.tabuleiro[4][9] = 5; // posicao do Chefao
 
         // preenche tabuleiro com armadilhas
         for (int i = 0; i < nArmadilhas; i++) {
             int x = (int) (Math.random() * comprimento);
             int y = (int) (Math.random() * largura);
             if (tabuleiro[x][y] == 0) {
-                tabuleiro[x][y] = (int) (Math.random() * 2 + 2);
+                tabuleiro[x][y] = (int) ((Math.random() * 2) + 2);
             } else {
                 i--;
             }
@@ -87,5 +87,13 @@ public class Tabuleiro {
             }
             System.out.println();
         }
+    }
+    
+    public int getEvento(int x, int y){
+        return tabuleiro[x][y];
+    }
+    
+    public void setEvento(int evento, int x, int y){
+        tabuleiro[x][y] = evento;
     }
 }

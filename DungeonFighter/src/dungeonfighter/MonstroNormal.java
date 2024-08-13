@@ -9,7 +9,8 @@ package dungeonfighter;
  * @author Duda
  */
 public class MonstroNormal extends Monstro {
-    public MonstroNormal(int ataque, int defesa, int saude, String nome){
-        super(ataque, defesa, saude, nome);
+    
+    public MonstroNormal(){
+        super(5, 5, 10, "Monstrinho");
     }
 }

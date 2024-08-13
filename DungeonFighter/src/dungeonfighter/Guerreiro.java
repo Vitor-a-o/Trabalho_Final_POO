@@ -9,14 +9,7 @@ package dungeonfighter;
  * @author Duda
  */
 public class Guerreiro extends Heroi{
-    public Guerreiro(int ataque, int defesa, int saude, String nome){
-        super(ataque, defesa, saude, nome);
+    public Guerreiro(){
+        super(8, 10, 5, "Guerreiro");
     }
-    
-    @Override
-    public void habilidadeEspecial(){
-        // nome: Postura defensiva
-        // aumenta a defesa em 50% por duas rodadas
-    }
-   
 }

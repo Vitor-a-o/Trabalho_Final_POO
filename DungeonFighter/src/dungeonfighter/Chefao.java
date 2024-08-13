@@ -12,8 +12,8 @@ public class Chefao extends Monstro {
     
     // os atributos do chefao precisam ser maiores que o do monstro normal!!!
     
-    public Chefao(int ataque, int defesa, int saude, String nome){
-        super(ataque, defesa, saude, nome);
+    public Chefao(){
+        super(6, 8, 30, "Boss");
     }
     
 }
