@@ -1,14 +1,5 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Main.java to edit this template
- */
-package dungeonfighter;
 
-/**
- *
- * @author Duda
- *
- */
+package dungeonfighter;
 
 import java.util.Scanner;
 
@@ -102,12 +93,16 @@ public class DungeonFighter {
                 }
                 break;
             case 4:
+                System.out.println("Voce encontrou um monstro!");
+                System.out.println("A batalha iniciou.");
                 Monstro comum = new MonstroNormal();
                 Batalha b1 = new Batalha(heroi,comum);
                 b1.iniciar();
                 if(!heroi.getVivo()) return -1;
                 break;
             case 5:
+                System.out.println("Voce encontrou o chefao! Prepare-se.");
+                System.out.println("A batalha iniciou.");
                 Monstro boss = new Chefao();
                 Batalha b2 = new Batalha(heroi,boss);
                 b2.iniciar();
@@ -125,6 +120,38 @@ public class DungeonFighter {
         }
         return 0;
     }
+    public static void revelarArmadilhas(Tabuleiro tabuleiro){
+       int linhaOuColuna = (int) (Math.random() * 2);
+       // se linhaOuColuna = 0, vai informar sobre a linha, se for 1, sobre a coluna
+       if(linhaOuColuna == 0){
+           int linha = (int) (Math.random() * 5);
+           boolean temArmadilha = false;
+           for (int i = 0; i < 9; i++){
+               if(tabuleiro.getEvento(linha,i) == 2 || tabuleiro.getEvento(linha,i) == 3){
+                   temArmadilha = true;
+               }
+           }
+           if(temArmadilha){
+               System.out.println("Na linha " + linha + ", tem pelo menos uma armadilha.");
+           }else{
+               System.out.println("Na linha " + linha + ", nao tem nenhuma armadilha.");
+           }
+       }else{
+           int coluna = (int) (Math.random() * 10);
+           boolean temArmadilha = false;
+           for (int i = 0; i < 5; i++){
+               if(tabuleiro.getEvento(i,coluna) == 2 || tabuleiro.getEvento(i,coluna) == 3){
+                   temArmadilha = true;
+               }
+           }
+           if(temArmadilha){
+               System.out.println("Na coluna " + coluna + ", tem pelo menos uma armadilha.");
+           }else{
+               System.out.println("Na coluna " + coluna + ", nao tem nenhuma armadilha.");
+           }
+       }
+       
+    }
     
     public static void inicioJogo(Heroi heroi, Tabuleiro tabuleiro){
         Scanner s = new Scanner(System.in);
@@ -139,9 +166,11 @@ public class DungeonFighter {
             System.out.println("2. Para tras");
             System.out.println("3. Para a esquerda.");
             System.out.println("4. Para a direita");
+            System.out.println("5. Usar dica."); // coloquei como uma quinta opção, provavelmente vai ser um botão na interface
             escolha = s.nextInt();
-            while(escolha < 1 || escolha > 4 || ((escolha == 1) && (xHeroi == 4)) || ((escolha == 2) && (xHeroi == 0)) || ((escolha == 3) && (yHeroi == 0))|| ((escolha == 4) && (yHeroi == 9))){
-                System.out.println("Escolha invalida. Digite novamente: ");
+            while(escolha < 1 || escolha > 5 || ((escolha == 1) && (xHeroi == 4)) || ((escolha == 2) && (xHeroi == 0)) || ((escolha == 3) && (yHeroi == 0))|| ((escolha == 4) && (yHeroi == 9))){
+                if(escolha < 1 || escolha > 5) System.out.println("Escolha invalida. Digite novamente: ");
+                else System.out.println("Movimento invalido. Escolha novamente: ");
                 escolha = s.nextInt();
             }
             if(escolha == 1){ // FRENTE
@@ -152,7 +181,7 @@ public class DungeonFighter {
                     tabuleiro.setEvento(0,xHeroi-1,yHeroi);
                 }
             }
-            if(escolha == 2){ // tras
+            if(escolha == 2){ // TRAS
                 continua = checaPosicao(heroi, tabuleiro, xHeroi-1, yHeroi);
                 if(continua == 0){
                     xHeroi--;
@@ -168,12 +197,20 @@ public class DungeonFighter {
                     tabuleiro.setEvento(0,xHeroi,yHeroi+1);
                 }
             }
-            if(escolha == 4){ // direita
+            if(escolha == 4){ // DIREITA
                 continua = checaPosicao(heroi, tabuleiro, xHeroi, yHeroi+1);
                 if(continua == 0){
                     yHeroi++;
                     tabuleiro.setEvento(1,xHeroi,yHeroi);
                     tabuleiro.setEvento(0,xHeroi,yHeroi-1);
+                }
+            }
+            if(escolha == 5){
+                if(heroi.getDicas() == 0){
+                    System.out.println("Voce nao tem mais dicas para usar.");
+                }else{
+                    revelarArmadilhas(tabuleiro);
+                    heroi.usaDica();
                 }
             }
         }
