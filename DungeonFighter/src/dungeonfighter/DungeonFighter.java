@@ -11,8 +11,24 @@ package dungeonfighter;
  */
 
 import java.util.Scanner;
+import javax.swing.JFrame;
+import javax.swing.JButton; 
+import javax.swing.JPanel; 
+import java.awt.event.ActionEvent; 
+import java.awt.event.ActionListener;
 
-public class DungeonFighter {
+public class DungeonFighter extends JFrame implements ActionListener{
+
+    public DungeonFighter(){
+        super("Dungeon Fighter");
+        setSize(800, 600);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setVisible(true);
+    }
+
+    public void actionPerformed(ActionEvent e) {
+        // Code to handle button click
+    }
     
     public static Heroi escolheHeroi(){
         Scanner s = new Scanner(System.in);
@@ -182,6 +198,7 @@ public class DungeonFighter {
     }
     
     public static void main(String[] args) {
+        DungeonFighter jogo = new DungeonFighter();
         Heroi heroi = escolheHeroi();
         distribuiPontos(heroi);
         Tabuleiro tabuleiro = new Tabuleiro(5, 5, 3);
