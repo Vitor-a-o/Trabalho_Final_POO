@@ -3,12 +3,14 @@ package dungeonfighter;
 
 import java.util.Scanner;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JButton; 
 import javax.swing.JPanel; 
 import java.awt.event.ActionEvent; 
 import java.awt.event.ActionListener;
 
 public class DungeonFighter extends JFrame implements ActionListener{
+    private Heroi heroi;
 
     public DungeonFighter(){
         super("Dungeon Fighter");
@@ -17,66 +19,190 @@ public class DungeonFighter extends JFrame implements ActionListener{
         setVisible(true);
     }
 
+    public Heroi getHeroi(){
+        return heroi;
+    }
+
     public void actionPerformed(ActionEvent e) {
-        // Code to handle button click
+        
     }
     
     public static Heroi escolheHeroi(){
-        Scanner s = new Scanner(System.in);
-        System.out.println("Digite qual a classe do seu heroi: ");
-        System.out.println("1. Barbaro");
-        System.out.println("2. Guerreiro");
-        System.out.println("3. Paladino");
-        System.out.println("Sua entrada: ");
-        int escolha = s.nextInt();
-        while(escolha < 1 || escolha > 3){
-            System.out.println("Escolha invalida. Digite novamente: ");
-            escolha = s.nextInt();
+        JFrame frame = new JFrame("Escolha seu heroi");
+        JButton barbaro = new JButton("Barbaro");
+        JButton guerreiro = new JButton("Guerreiro");
+        JButton paladino = new JButton("Paladino");
+
+        barbaro.setBounds(50, 100, 95, 30);
+        guerreiro.setBounds(50, 150, 95, 30);
+        paladino.setBounds(50, 200, 95, 30);
+
+        final Heroi[] heroi = new Heroi[1];
+
+        barbaro.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e){
+                heroi[0] = new Barbaro();
+                frame.dispose();
+            }
+        });
+
+        guerreiro.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e){
+                heroi[0] = new Guerreiro();
+                frame.dispose();
+            }
+        });
+
+        paladino.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e){
+                heroi[0] = new Paladino();
+                frame.dispose();
+            }
+        });
+
+        frame.add(barbaro);
+        frame.add(guerreiro);
+        frame.add(paladino);
+
+        frame.setSize(200, 300);
+        frame.setLayout(null);
+        frame.setVisible(true);
+
+        while(heroi[0] == null){
+            try{
+                Thread.sleep(1000);
+            }catch(InterruptedException e){
+                e.printStackTrace();
+            }
         }
-        
-        if(escolha == 1){
-            return new Barbaro();
-        }
-        if(escolha == 2){
-            return new Guerreiro();
-        }
-        if(escolha == 3){
-            return new Paladino();
-        }
-        return null;
+        return heroi[0];
+
     }
     
     public static void distribuiPontos(Heroi heroi){
-        Scanner s = new Scanner(System.in);
-        int pontos = 5;
-        while(pontos > 0){
-            int escolha;
-            System.out.println("Voce tem " + pontos + " pontos para distribuir entre ataque, defesa e saude.");
-            System.out.println("Ataque atual: " + heroi.getAtaque());
-            System.out.println("Defesa atual: " + heroi.getDefesa());
-            System.out.println("Saude atual: " + heroi.getSaude());
-            System.out.println("Digite 1 para colocar um ponto em Ataque.");
-            System.out.println("Digite 2 para colocar um ponto em Defesa.");
-            System.out.println("Digite 3 para colocar um ponto em Saude.");
-            System.out.println("Entrada: ");
-            escolha = s.nextInt();
-            while(escolha < 1 || escolha > 3){
-                System.out.println("Escolha invalida. Digite novamente: ");
-                escolha = s.nextInt();
+        final int[] pontosRestantes;
+        pontosRestantes = new int[1];
+        pontosRestantes[0] = 5;
+        final int[] ataqueAdd, defesaAdd, saudeAdd;
+        ataqueAdd = new int[1];
+        defesaAdd = new int[1];
+        saudeAdd = new int[1];
+        ataqueAdd[0] = 0;
+        defesaAdd[0] = 0;
+        saudeAdd[0] = 0;
+
+        JFrame frame = new JFrame("Distribuir Pontos");
+        frame.setSize(400, 300);
+        frame.setLayout(null);
+
+        JLabel pontosLabel = new JLabel("Pontos restantes: 5");
+        pontosLabel.setBounds(100, 20, 300, 30);
+        frame.add(pontosLabel);
+
+        JLabel ataqueLabel = new JLabel("Ataque atual: " + heroi.getAtaque());
+        ataqueLabel.setBounds(100, 60, 300, 30);
+        frame.add(ataqueLabel);
+
+        JLabel defesaLabel = new JLabel("Defesa atual: " + heroi.getDefesa());
+        defesaLabel.setBounds(100, 100, 300, 30);
+        frame.add(defesaLabel);
+
+        JLabel saudeLabel = new JLabel("Saude atual: " + heroi.getSaude());
+        saudeLabel.setBounds(100, 140, 300, 30);
+        frame.add(saudeLabel);
+
+        JButton ataqueMais = new JButton("+");
+        JButton ataqueMenos = new JButton("-");
+        JButton defesaMais = new JButton("+");
+        JButton defesaMenos = new JButton("-");
+        JButton saudeMais = new JButton("+");
+        JButton saudeMenos = new JButton("-");
+
+        ataqueMais.setBounds(230, 60, 50, 30);
+        ataqueMenos.setBounds(20, 60, 50, 30);
+        defesaMais.setBounds(230, 100, 50, 30); 
+        defesaMenos.setBounds(20, 100, 50, 30);
+        saudeMais.setBounds(230, 140, 50, 30);
+        saudeMenos.setBounds(20, 140, 50, 30);
+
+        ataqueMais.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e){
+                if(pontosRestantes[0] > 0){
+                    heroi.setAtaque(heroi.getAtaque() + 2);
+                    pontosLabel.setText("Pontos restantes: " + --pontosRestantes[0]);
+                    ataqueLabel.setText("Ataque atual: " + heroi.getAtaque());
+                    ataqueAdd[0] += 1;
+                }
             }
-            if(escolha == 1){
-                heroi.setAtaque(heroi.getAtaque() + 2);
-                pontos--;
+        });
+
+        ataqueMenos.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e){
+                if(ataqueAdd[0] > 0){
+                    heroi.setAtaque(heroi.getAtaque() - 2);
+                    pontosLabel.setText("Pontos restantes: " + ++pontosRestantes[0]);
+                    ataqueLabel.setText("Ataque atual: " + heroi.getAtaque());
+                    ataqueAdd[0] -= 1;
+                }
             }
-            if(escolha == 2){
-                heroi.setDefesa(heroi.getDefesa() + 2);
-                pontos--;
+        });
+
+        defesaMais.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e){
+                if(pontosRestantes[0] > 0){
+                    heroi.setDefesa(heroi.getDefesa() + 2);
+                    pontosLabel.setText("Pontos restantes: " + --pontosRestantes[0]);
+                    defesaLabel.setText("Defesa atual: " + heroi.getDefesa());
+                    defesaAdd[0] += 1;
+                }
             }
-            if(escolha == 3){
-                heroi.setSaude(heroi.getSaude() + 2);
-                pontos--;
+        });
+
+        defesaMenos.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e){
+                if(defesaAdd[0] > 0){
+                    heroi.setDefesa(heroi.getDefesa() - 2);
+                    pontosLabel.setText("Pontos restantes: " + ++pontosRestantes[0]);
+                    defesaLabel.setText("Defesa atual: " + heroi.getDefesa());
+                    defesaAdd[0] -= 1;
+                }
             }
-        }
+        });
+
+        saudeMais.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e){
+                if(pontosRestantes[0] > 0){
+                    heroi.setSaude(heroi.getSaude() + 2);
+                    pontosLabel.setText("Pontos restantes: " + --pontosRestantes[0]);
+                    saudeLabel.setText("Saude atual: " + heroi.getSaude());
+                    saudeAdd[0] += 1;
+                }
+            }
+        });
+
+        saudeMenos.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e){
+                if(saudeAdd[0] > 0){
+                    heroi.setSaude(heroi.getSaude() - 2);
+                    pontosLabel.setText("Pontos restantes: " + ++pontosRestantes[0]);
+                    saudeLabel.setText("Saude atual: " + heroi.getSaude());
+                    saudeAdd[0] -= 1;
+                }
+            }
+        });
+
+        
+
+        frame.add(ataqueMais);
+        frame.add(ataqueMenos);
+        frame.add(defesaMais);
+        frame.add(defesaMenos);
+        frame.add(saudeMais);
+        frame.add(saudeMenos);
+        
+
+        frame.setVisible(true);
+       
     }
     
     public static int checaPosicao(Heroi heroi, Tabuleiro tabuleiro, int x, int y){
@@ -235,9 +361,10 @@ public class DungeonFighter extends JFrame implements ActionListener{
     }
     
     public static void main(String[] args) {
-        DungeonFighter jogo = new DungeonFighter();
         Heroi heroi = escolheHeroi();
+        System.out.println("Voce escolheu o heroi " + heroi.getNome() + ".");
         distribuiPontos(heroi);
+        DungeonFighter jogo = new DungeonFighter();
         Tabuleiro tabuleiro = new Tabuleiro(5, 5, 3);
         tabuleiro.preencheTabuleiro();
         inicioJogo(heroi, tabuleiro);
