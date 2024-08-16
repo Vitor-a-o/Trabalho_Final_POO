@@ -1,13 +1,11 @@
 
 package dungeonfighter;
 
+import java.util.Scanner;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JButton; 
-import javax.swing.JPanel;
-
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
+import javax.swing.JPanel; 
 import java.awt.event.ActionEvent; 
 import java.awt.event.ActionListener;
 
@@ -193,7 +191,7 @@ public class DungeonFighter extends JFrame implements ActionListener{
             }
         });
 
-
+        
 
         frame.add(ataqueMais);
         frame.add(ataqueMenos);
@@ -289,17 +287,68 @@ public class DungeonFighter extends JFrame implements ActionListener{
     }
     
     public static void inicioJogo(Heroi heroi, Tabuleiro tabuleiro){
-        JFrame frame = new JFrame("Dungeon Fighter");
-        frame.setSize(800, 600);
-        JPanel statusHeroi = new JPanel();
-        JPanel tabuleiroPanel = new JPanel(new GridBagLayout());
-
-
-        GridBagConstraints c = new GridBagConstraints();
-        
+        Scanner s = new Scanner(System.in);
         int continua = 0, xHeroi = 0, yHeroi = 4, escolha;
-
-        
+        // valor continua: flag para saber se o jogo deve acabar
+        // continua = 1 é vitoria e continua = -1 é derrota.
+        while(continua == 0){
+            tabuleiro.printTabuleiro();
+            System.out.println("Voce esta na posicao [" + xHeroi + ", " + yHeroi + "].");
+            System.out.println("Para onde deseja se mover?");
+            System.out.println("1. Para frente");
+            System.out.println("2. Para tras");
+            System.out.println("3. Para a esquerda.");
+            System.out.println("4. Para a direita");
+            System.out.println("5. Usar dica."); // coloquei como uma quinta opção, provavelmente vai ser um botão na interface
+            escolha = s.nextInt();
+            while(escolha < 1 || escolha > 5 || ((escolha == 1) && (xHeroi == 4)) || ((escolha == 2) && (xHeroi == 0)) || ((escolha == 3) && (yHeroi == 0))|| ((escolha == 4) && (yHeroi == 9))){
+                if(escolha < 1 || escolha > 5) System.out.println("Escolha invalida. Digite novamente: ");
+                else System.out.println("Movimento invalido. Escolha novamente: ");
+                escolha = s.nextInt();
+            }
+            if(escolha == 1){ // FRENTE
+                continua = checaPosicao(heroi, tabuleiro, xHeroi+1, yHeroi);
+                if(continua == 0){
+                    xHeroi++;
+                    tabuleiro.setEvento(1,xHeroi,yHeroi);
+                    tabuleiro.setEvento(0,xHeroi-1,yHeroi);
+                }
+            }
+            if(escolha == 2){ // TRAS
+                continua = checaPosicao(heroi, tabuleiro, xHeroi-1, yHeroi);
+                if(continua == 0){
+                    xHeroi--;
+                    tabuleiro.setEvento(1,xHeroi,yHeroi);
+                    tabuleiro.setEvento(0,xHeroi+1,yHeroi);
+                }
+            }
+            if(escolha == 3){ // ESQUERDA
+                continua = checaPosicao(heroi, tabuleiro, xHeroi, yHeroi-1);
+                if(continua == 0){
+                    yHeroi--;
+                    tabuleiro.setEvento(1,xHeroi,yHeroi);
+                    tabuleiro.setEvento(0,xHeroi,yHeroi+1);
+                }
+            }
+            if(escolha == 4){ // DIREITA
+                continua = checaPosicao(heroi, tabuleiro, xHeroi, yHeroi+1);
+                if(continua == 0){
+                    yHeroi++;
+                    tabuleiro.setEvento(1,xHeroi,yHeroi);
+                    tabuleiro.setEvento(0,xHeroi,yHeroi-1);
+                }
+            }
+            if(escolha == 5){
+                if(heroi.getDicas() == 0){
+                    System.out.println("Voce nao tem mais dicas para usar.");
+                }else{
+                    revelarArmadilhas(tabuleiro);
+                    heroi.usaDica();
+                }
+            }
+        }
+        if(continua == 1) System.out.println("Voce venceu! :)");
+        if(continua == -1) System.out.println("Voce perdeu! :(");
     }
     
     public static void main(String[] args) {
