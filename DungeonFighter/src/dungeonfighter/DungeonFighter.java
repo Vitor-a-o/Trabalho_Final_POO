@@ -33,9 +33,9 @@ public class DungeonFighter extends JFrame implements ActionListener{
         JButton guerreiro = new JButton("Guerreiro");
         JButton paladino = new JButton("Paladino");
 
-        barbaro.setBounds(50, 100, 95, 30);
-        guerreiro.setBounds(50, 150, 95, 30);
-        paladino.setBounds(50, 200, 95, 30);
+        barbaro.setBounds(50, 100, 150, 30);
+        guerreiro.setBounds(50, 150, 150, 30);
+        paladino.setBounds(50, 200, 150, 30);
 
         final Heroi[] heroi = new Heroi[1];
 
@@ -64,7 +64,7 @@ public class DungeonFighter extends JFrame implements ActionListener{
         frame.add(guerreiro);
         frame.add(paladino);
 
-        frame.setSize(200, 300);
+        frame.setSize(400, 300);
         frame.setLayout(null);
         frame.setVisible(true);
 
@@ -92,24 +92,28 @@ public class DungeonFighter extends JFrame implements ActionListener{
         saudeAdd[0] = 0;
 
         JFrame frame = new JFrame("Distribuir Pontos");
-        frame.setSize(400, 300);
+        frame.setSize(400, 400);
         frame.setLayout(null);
 
         JLabel pontosLabel = new JLabel("Pontos restantes: 5");
-        pontosLabel.setBounds(100, 20, 300, 30);
-        frame.add(pontosLabel);
-
         JLabel ataqueLabel = new JLabel("Ataque atual: " + heroi.getAtaque());
-        ataqueLabel.setBounds(100, 60, 300, 30);
-        frame.add(ataqueLabel);
-
-        JLabel defesaLabel = new JLabel("Defesa atual: " + heroi.getDefesa());
-        defesaLabel.setBounds(100, 100, 300, 30);
-        frame.add(defesaLabel);
-
         JLabel saudeLabel = new JLabel("Saude atual: " + heroi.getSaude());
+        JLabel defesaLabel = new JLabel("Defesa atual: " + heroi.getDefesa());
+        JLabel mensagemConfirmacao = new JLabel("Voce ainda tem pontos para distribuir.");
+        
+        pontosLabel.setBounds(100, 20, 300, 30);
+        ataqueLabel.setBounds(100, 60, 300, 30);
         saudeLabel.setBounds(100, 140, 300, 30);
+        defesaLabel.setBounds(100, 100, 300, 30);
+        mensagemConfirmacao.setBounds(100, 180, 300, 30);
+        mensagemConfirmacao.setVisible(false);
+        
+        frame.add(pontosLabel);
+        frame.add(ataqueLabel);
         frame.add(saudeLabel);
+        frame.add(defesaLabel);
+        frame.add(mensagemConfirmacao);
+
 
         JButton ataqueMais = new JButton("+");
         JButton ataqueMenos = new JButton("-");
@@ -117,6 +121,7 @@ public class DungeonFighter extends JFrame implements ActionListener{
         JButton defesaMenos = new JButton("-");
         JButton saudeMais = new JButton("+");
         JButton saudeMenos = new JButton("-");
+        JButton confirmar = new JButton("Confirmar");
 
         ataqueMais.setBounds(230, 60, 50, 30);
         ataqueMenos.setBounds(20, 60, 50, 30);
@@ -124,6 +129,7 @@ public class DungeonFighter extends JFrame implements ActionListener{
         defesaMenos.setBounds(20, 100, 50, 30);
         saudeMais.setBounds(230, 140, 50, 30);
         saudeMenos.setBounds(20, 140, 50, 30);
+        confirmar.setBounds(150, 280, 150, 30);
 
         ataqueMais.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e){
@@ -132,6 +138,7 @@ public class DungeonFighter extends JFrame implements ActionListener{
                     pontosLabel.setText("Pontos restantes: " + --pontosRestantes[0]);
                     ataqueLabel.setText("Ataque atual: " + heroi.getAtaque());
                     ataqueAdd[0] += 1;
+                    mensagemConfirmacao.setVisible(false);
                 }
             }
         });
@@ -143,6 +150,7 @@ public class DungeonFighter extends JFrame implements ActionListener{
                     pontosLabel.setText("Pontos restantes: " + ++pontosRestantes[0]);
                     ataqueLabel.setText("Ataque atual: " + heroi.getAtaque());
                     ataqueAdd[0] -= 1;
+                    mensagemConfirmacao.setVisible(false);
                 }
             }
         });
@@ -154,6 +162,7 @@ public class DungeonFighter extends JFrame implements ActionListener{
                     pontosLabel.setText("Pontos restantes: " + --pontosRestantes[0]);
                     defesaLabel.setText("Defesa atual: " + heroi.getDefesa());
                     defesaAdd[0] += 1;
+                    mensagemConfirmacao.setVisible(false);
                 }
             }
         });
@@ -165,6 +174,7 @@ public class DungeonFighter extends JFrame implements ActionListener{
                     pontosLabel.setText("Pontos restantes: " + ++pontosRestantes[0]);
                     defesaLabel.setText("Defesa atual: " + heroi.getDefesa());
                     defesaAdd[0] -= 1;
+                    mensagemConfirmacao.setVisible(false);
                 }
             }
         });
@@ -176,6 +186,7 @@ public class DungeonFighter extends JFrame implements ActionListener{
                     pontosLabel.setText("Pontos restantes: " + --pontosRestantes[0]);
                     saudeLabel.setText("Saude atual: " + heroi.getSaude());
                     saudeAdd[0] += 1;
+                    mensagemConfirmacao.setVisible(false);
                 }
             }
         });
@@ -187,11 +198,20 @@ public class DungeonFighter extends JFrame implements ActionListener{
                     pontosLabel.setText("Pontos restantes: " + ++pontosRestantes[0]);
                     saudeLabel.setText("Saude atual: " + heroi.getSaude());
                     saudeAdd[0] -= 1;
+                    mensagemConfirmacao.setVisible(false);
                 }
             }
         });
 
-        
+        confirmar.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e){
+                if(pontosRestantes[0] == 0){
+                    frame.dispose();
+                }else{
+                    mensagemConfirmacao.setVisible(true);
+                }
+            }
+        });
 
         frame.add(ataqueMais);
         frame.add(ataqueMenos);
@@ -199,7 +219,7 @@ public class DungeonFighter extends JFrame implements ActionListener{
         frame.add(defesaMenos);
         frame.add(saudeMais);
         frame.add(saudeMenos);
-        
+        frame.add(confirmar);
 
         frame.setVisible(true);
        
