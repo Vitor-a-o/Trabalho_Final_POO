@@ -209,32 +209,23 @@ public class DungeonFighter extends JFrame implements ActionListener{
         int evento = tabuleiro.getEvento(x, y);
         int pontosDeVida;
         switch(evento){
-            case 0:
+            case 0: // Nenhum evento na posição do tabuleiro
                 break;
-            case 1:
-                System.out.println("Erro: Nao deveria ser possivel");
-                break;
-            case 2:
-                System.out.println("Voce caiu em uma armadilha!");
-                pontosDeVida = 3;
-                heroi.setVidaAtual(heroi.getVidaAtual()-3);
-                if(heroi.getVidaAtual() <= 0){
+            case 2: // Armadilha de perda fixa
+                Armadilha a1 = new Armadilha(3);
+                a1.tiraVida(heroi);
+                if(heroi.getVivo() == false){
                     return -1;
-                }else{
-                    System.out.println("Voce perdeu " + pontosDeVida + " pontos de vida. Agora, voce tem " + heroi.getVidaAtual() + " pontos de vida.");
                 }
                 break;
-            case 3:
-                System.out.println("Voce caiu em uma armadilha!");
-                pontosDeVida = (int) (Math.random() * 6);
-                heroi.setVidaAtual(heroi.getVidaAtual()-3);
-                if(heroi.getVidaAtual() <= 0){
+            case 3: // Armadilha de perda aleatoria (1 a 5)
+                Armadilha a2 = new Armadilha((int) (Math.random() * 5) + 1);
+                a2.tiraVida(heroi);
+                if(heroi.getVivo() == false){
                     return -1;
-                }else{
-                    System.out.println("Voce perdeu " + pontosDeVida + " pontos de vida. Agora, voce tem " + heroi.getVidaAtual() + " pontos de vida.");
                 }
                 break;
-            case 4:
+            case 4: // Monstro comum
                 System.out.println("Voce encontrou um monstro!");
                 System.out.println("A batalha iniciou.");
                 Monstro comum = new MonstroNormal();
@@ -242,7 +233,7 @@ public class DungeonFighter extends JFrame implements ActionListener{
                 b1.iniciar();
                 if(!heroi.getVivo()) return -1;
                 break;
-            case 5:
+            case 5: // Chefão
                 System.out.println("Voce encontrou o chefao! Prepare-se.");
                 System.out.println("A batalha iniciou.");
                 Monstro boss = new Chefao();
@@ -250,7 +241,7 @@ public class DungeonFighter extends JFrame implements ActionListener{
                 b2.iniciar();
                 if(!heroi.getVivo()) return -1;
                 else return 1;
-            case 6:
+            case 6: // Elixir
                 heroi.incrementaElixir();
                 if(heroi.getQuantidadeElixir() == 3){
                     System.out.println("Voce encontrou um elixir, mas voce nao tem mais capacidade para carregar outro elixir.");
@@ -364,7 +355,7 @@ public class DungeonFighter extends JFrame implements ActionListener{
         Heroi heroi = escolheHeroi();
         System.out.println("Voce escolheu o heroi " + heroi.getNome() + ".");
         distribuiPontos(heroi);
-        DungeonFighter jogo = new DungeonFighter();
+        //DungeonFighter jogo = new DungeonFighter();
         Tabuleiro tabuleiro = new Tabuleiro(5, 5, 3);
         tabuleiro.preencheTabuleiro();
         inicioJogo(heroi, tabuleiro);
