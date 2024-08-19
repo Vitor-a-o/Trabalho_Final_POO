@@ -5,7 +5,11 @@ import java.util.Scanner;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JButton; 
-import javax.swing.JPanel; 
+import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
+import javax.tools.Tool;
+import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent; 
 import java.awt.event.ActionListener;
 
@@ -13,10 +17,7 @@ public class DungeonFighter extends JFrame implements ActionListener{
     private Heroi heroi;
 
     public DungeonFighter(){
-        super("Dungeon Fighter");
-        setSize(800, 600);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setVisible(true);
+        
     }
 
     public Heroi getHeroi(){
@@ -29,6 +30,7 @@ public class DungeonFighter extends JFrame implements ActionListener{
     
     public static Heroi escolheHeroi(){
         JFrame frame = new JFrame("Escolha seu heroi");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         JButton barbaro = new JButton("Barbaro");
         JButton guerreiro = new JButton("Guerreiro");
         JButton paladino = new JButton("Paladino");
@@ -90,8 +92,12 @@ public class DungeonFighter extends JFrame implements ActionListener{
         ataqueAdd[0] = 0;
         defesaAdd[0] = 0;
         saudeAdd[0] = 0;
+        final boolean[] confirmacao;
+        confirmacao = new boolean[1];
+        confirmacao[0] = false;
 
         JFrame frame = new JFrame("Distribuir Pontos");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(400, 400);
         frame.setLayout(null);
 
@@ -207,11 +213,14 @@ public class DungeonFighter extends JFrame implements ActionListener{
             public void actionPerformed(ActionEvent e){
                 if(pontosRestantes[0] == 0){
                     frame.dispose();
+                    confirmacao[0] = true;
                 }else{
                     mensagemConfirmacao.setVisible(true);
                 }
             }
         });
+
+        
 
         frame.add(ataqueMais);
         frame.add(ataqueMenos);
@@ -222,7 +231,14 @@ public class DungeonFighter extends JFrame implements ActionListener{
         frame.add(confirmar);
 
         frame.setVisible(true);
-       
+
+       while(confirmacao[0] == false){
+            try{
+                Thread.sleep(1000);
+            }catch(InterruptedException e){
+                e.printStackTrace();
+            }
+        }
     }
     
     public static int checaPosicao(Heroi heroi, Tabuleiro tabuleiro, int x, int y){
@@ -273,6 +289,7 @@ public class DungeonFighter extends JFrame implements ActionListener{
         }
         return 0;
     }
+
     public static void revelarArmadilhas(Tabuleiro tabuleiro){
        int linhaOuColuna = (int) (Math.random() * 2);
        // se linhaOuColuna = 0, vai informar sobre a linha, se for 1, sobre a coluna
@@ -307,75 +324,49 @@ public class DungeonFighter extends JFrame implements ActionListener{
     }
     
     public static void inicioJogo(Heroi heroi, Tabuleiro tabuleiro){
-        Scanner s = new Scanner(System.in);
+        
+        JFrame frame = new JFrame("Dungeon Fighter");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        frame.setLayout(null);
+        frame.setVisible(true);
+
+        Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
+        int fheight = (int) size.getHeight();
+        int fwidth = (int) size.getWidth();
+
+        JPanel statusHeroi = new JPanel();
+        statusHeroi.setLayout(null);
+        statusHeroi.setBounds((fwidth - 300), 0, 300, 300);
+
+        JLabel nomeHeroi = new JLabel("Nome: " + heroi.getNome());
+        JLabel ataqueHeroi = new JLabel("Ataque: " + heroi.getAtaque());
+        JLabel defesaHeroi = new JLabel("Defesa: " + heroi.getDefesa());
+        JLabel saudeHeroi = new JLabel("Saude: " + heroi.getSaude());
+        JLabel elixirHeroi = new JLabel("Elixir: " + heroi.getQuantidadeElixir());
+
+        nomeHeroi.setBounds(10, 10, 300, 30);
+        ataqueHeroi.setBounds(10, 50, 300, 30);
+        defesaHeroi.setBounds(10, 90, 300, 30);
+        saudeHeroi.setBounds(10, 130, 300, 30);
+        elixirHeroi.setBounds(10, 170, 300, 30);
+
+        statusHeroi.add(nomeHeroi);
+        statusHeroi.add(ataqueHeroi);
+        statusHeroi.add(defesaHeroi);
+        statusHeroi.add(saudeHeroi);
+        statusHeroi.add(elixirHeroi);
+
+        frame.add(statusHeroi);
+
         int continua = 0, xHeroi = 0, yHeroi = 4, escolha;
-        // valor continua: flag para saber se o jogo deve acabar
-        // continua = 1 é vitoria e continua = -1 é derrota.
-        while(continua == 0){
-            tabuleiro.printTabuleiro();
-            System.out.println("Voce esta na posicao [" + xHeroi + ", " + yHeroi + "].");
-            System.out.println("Para onde deseja se mover?");
-            System.out.println("1. Para frente");
-            System.out.println("2. Para tras");
-            System.out.println("3. Para a esquerda.");
-            System.out.println("4. Para a direita");
-            System.out.println("5. Usar dica."); // coloquei como uma quinta opção, provavelmente vai ser um botão na interface
-            escolha = s.nextInt();
-            while(escolha < 1 || escolha > 5 || ((escolha == 1) && (xHeroi == 4)) || ((escolha == 2) && (xHeroi == 0)) || ((escolha == 3) && (yHeroi == 0))|| ((escolha == 4) && (yHeroi == 9))){
-                if(escolha < 1 || escolha > 5) System.out.println("Escolha invalida. Digite novamente: ");
-                else System.out.println("Movimento invalido. Escolha novamente: ");
-                escolha = s.nextInt();
-            }
-            if(escolha == 1){ // FRENTE
-                continua = checaPosicao(heroi, tabuleiro, xHeroi+1, yHeroi);
-                if(continua == 0){
-                    xHeroi++;
-                    tabuleiro.setEvento(1,xHeroi,yHeroi);
-                    tabuleiro.setEvento(0,xHeroi-1,yHeroi);
-                }
-            }
-            if(escolha == 2){ // TRAS
-                continua = checaPosicao(heroi, tabuleiro, xHeroi-1, yHeroi);
-                if(continua == 0){
-                    xHeroi--;
-                    tabuleiro.setEvento(1,xHeroi,yHeroi);
-                    tabuleiro.setEvento(0,xHeroi+1,yHeroi);
-                }
-            }
-            if(escolha == 3){ // ESQUERDA
-                continua = checaPosicao(heroi, tabuleiro, xHeroi, yHeroi-1);
-                if(continua == 0){
-                    yHeroi--;
-                    tabuleiro.setEvento(1,xHeroi,yHeroi);
-                    tabuleiro.setEvento(0,xHeroi,yHeroi+1);
-                }
-            }
-            if(escolha == 4){ // DIREITA
-                continua = checaPosicao(heroi, tabuleiro, xHeroi, yHeroi+1);
-                if(continua == 0){
-                    yHeroi++;
-                    tabuleiro.setEvento(1,xHeroi,yHeroi);
-                    tabuleiro.setEvento(0,xHeroi,yHeroi-1);
-                }
-            }
-            if(escolha == 5){
-                if(heroi.getDicas() == 0){
-                    System.out.println("Voce nao tem mais dicas para usar.");
-                }else{
-                    revelarArmadilhas(tabuleiro);
-                    heroi.usaDica();
-                }
-            }
-        }
-        if(continua == 1) System.out.println("Voce venceu! :)");
-        if(continua == -1) System.out.println("Voce perdeu! :(");
+        
     }
     
     public static void main(String[] args) {
         Heroi heroi = escolheHeroi();
         System.out.println("Voce escolheu o heroi " + heroi.getNome() + ".");
         distribuiPontos(heroi);
-        //DungeonFighter jogo = new DungeonFighter();
         Tabuleiro tabuleiro = new Tabuleiro(5, 5, 3);
         tabuleiro.preencheTabuleiro();
         inicioJogo(heroi, tabuleiro);
