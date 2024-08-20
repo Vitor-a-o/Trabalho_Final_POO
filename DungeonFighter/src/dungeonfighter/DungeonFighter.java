@@ -14,23 +14,72 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class DungeonFighter extends JFrame implements ActionListener{
-    private Heroi heroi;
-
-    public DungeonFighter(){
-        
-    }
-
-    public Heroi getHeroi(){
-        return heroi;
-    }
 
     public void actionPerformed(ActionEvent e) {
         
+    }
+
+    public static int jogo(){
+        final int[] menu = new int[1];
+        menu[0] = 0;
+
+        JFrame frame = new JFrame("Dungeon Fighter");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setExtendedState(MAXIMIZED_BOTH);
+        frame.setLayout(null);
+        frame.setVisible(true);
+
+        Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
+        int fheight = (int) size.getHeight();
+        int fwidth = (int) size.getWidth();
+
+        JButton iniciar = new JButton("Iniciar Jogo");
+        JButton debugar = new JButton("Debugar");
+        JButton sair = new JButton("Sair");
+
+        iniciar.setBounds((fwidth/2) - 300, (fheight/2) + 100, 200, 30);
+        sair.setBounds((fwidth/2) - 100, (fheight/2) + 100, 200, 30);
+        debugar.setBounds((fwidth/2) + 100, (fheight/2) + 100, 200, 30);
+
+        iniciar.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e){
+                menu[0] = 1;
+                frame.dispose();
+            }
+        });
+
+        sair.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e){
+                System.exit(0);
+            }
+        });
+
+        debugar.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e){
+                menu[0] = 2;
+                frame.dispose();
+            }
+        });
+
+        frame.add(iniciar);
+        frame.add(sair);
+        frame.add(debugar);
+
+        while(menu[0] == 0){
+            try{
+                Thread.sleep(1000);
+            }catch(InterruptedException e){
+                e.printStackTrace();
+            }
+        }
+
+        return menu[0];
     }
     
     public static Heroi escolheHeroi(){
         JFrame frame = new JFrame("Escolha seu heroi");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setExtendedState(MAXIMIZED_BOTH);
         JButton barbaro = new JButton("Barbaro");
         JButton guerreiro = new JButton("Guerreiro");
         JButton paladino = new JButton("Paladino");
@@ -66,7 +115,6 @@ public class DungeonFighter extends JFrame implements ActionListener{
         frame.add(guerreiro);
         frame.add(paladino);
 
-        frame.setSize(400, 300);
         frame.setLayout(null);
         frame.setVisible(true);
 
@@ -98,7 +146,7 @@ public class DungeonFighter extends JFrame implements ActionListener{
 
         JFrame frame = new JFrame("Distribuir Pontos");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(400, 400);
+        frame.setExtendedState(MAXIMIZED_BOTH);
         frame.setLayout(null);
 
         JLabel pontosLabel = new JLabel("Pontos restantes: 5");
@@ -357,6 +405,21 @@ public class DungeonFighter extends JFrame implements ActionListener{
         statusHeroi.add(saudeHeroi);
         statusHeroi.add(elixirHeroi);
 
+        JPanel batalha = new JPanel();
+        batalha.setLayout(null);
+        batalha.setBounds((fwidth - 300), 320, 300, 300);
+        batalha.setVisible(true);
+
+        JButton atacar = new JButton("Atacar");
+        JButton especial = new JButton("Habilidade Especial");
+        JButton elixir = new JButton("Elixir");
+
+        atacar.setBounds(10, 10, 150, 30);
+        especial.setBounds(10, 50, 150, 30);
+        elixir.setBounds(10, 90, 150, 30);
+
+        
+
         frame.add(statusHeroi);
 
         int continua = 0, xHeroi = 0, yHeroi = 4, escolha;
@@ -364,11 +427,14 @@ public class DungeonFighter extends JFrame implements ActionListener{
     }
     
     public static void main(String[] args) {
-        Heroi heroi = escolheHeroi();
-        System.out.println("Voce escolheu o heroi " + heroi.getNome() + ".");
-        distribuiPontos(heroi);
-        Tabuleiro tabuleiro = new Tabuleiro(5, 5, 3);
-        tabuleiro.preencheTabuleiro();
-        inicioJogo(heroi, tabuleiro);
+        int menu = jogo();
+        if(menu == 1){
+            Heroi heroi = escolheHeroi();
+            distribuiPontos(heroi);
+            Tabuleiro tabuleiro = new Tabuleiro(5, 5, 5);
+            inicioJogo(heroi, tabuleiro);
+        }else{
+            System.out.println("Debugando...");
+        }
     }
 }
