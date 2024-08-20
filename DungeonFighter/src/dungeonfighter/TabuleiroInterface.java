@@ -27,6 +27,8 @@ public class TabuleiroInterface extends JFrame {
         
         setTitle("Tabuleiro do Jogo");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        setExtendedState(MAXIMIZED_BOTH);
         setLayout(new BorderLayout());
         setExtendedState(MAXIMIZED_BOTH);
         this.heroi = heroi;

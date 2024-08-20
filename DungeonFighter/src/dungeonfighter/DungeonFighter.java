@@ -2,15 +2,11 @@
 package dungeonfighter;
 
 import java.awt.BorderLayout;
-import java.util.Scanner;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JButton; 
 import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
-import javax.tools.Tool;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -182,10 +178,9 @@ public class DungeonFighter extends JFrame implements ActionListener{
         gbc.gridy = 0;
         painelBotoes.add(paladino, gbc);
         frame.add(painelBotoes, BorderLayout.CENTER);
-        
-        JPanel painelDescricoes = new JPanel(new BorderLayout());
 
-        // Criar os JLabels
+        // descrições das classes:
+        JPanel painelDescricoes = new JPanel(new BorderLayout());
         JLabel labelEsquerda = new JLabel("Habilidade especial do Bárbaro: GOLPE FURIOSO (Desfere um ataque que causa 50% a mais de dano)", SwingConstants.CENTER);
         JLabel labelCentro = new JLabel("Habilidade especial do Paladino: RECUPERAÇÃO (Recupera 50% dos seus pontos de vida totais)", SwingConstants.CENTER);
         JLabel labelDireita = new JLabel("Habilidade especial do Guerreiro: POSTURA DEFENSIVA (Aumenta sua defesa em 50% durante duas rodadas)", SwingConstants.CENTER);
@@ -193,18 +188,14 @@ public class DungeonFighter extends JFrame implements ActionListener{
         labelCentro.setFont(fonte);
         labelDireita.setFont(fonte);
         
-        // Adicionar bordas para afastar o texto das margens
+        // bordas dos textos:
         labelEsquerda.setBorder(new EmptyBorder(20, 20, 20, 20)); // margens: cima, esquerda, inferior, direita
         labelCentro.setBorder(new EmptyBorder(10, 20, 20, 20)); 
         labelDireita.setBorder(new EmptyBorder(10, 20, 50, 20));
 
-       
-        // Adicionar os JLabels ao painel
         painelDescricoes.add(labelEsquerda, BorderLayout.NORTH);
         painelDescricoes.add(labelCentro, BorderLayout.CENTER);
         painelDescricoes.add(labelDireita, BorderLayout.SOUTH);
-
-        // Adicionar o painel ao frame
         frame.add(painelDescricoes, BorderLayout.SOUTH);
         
         frame.setVisible(true);

@@ -38,10 +38,10 @@ public class Tabuleiro {
                 tabuleiro[i][j] = 0;
             }
         }
-
+       
         this.tabuleiro[0][4] = 1; // posicao inicial do heroi
-        this.tabuleiro[4][9] = 5; // posicao do Chefao
-
+        this.tabuleiro[4][(int)(Math.random() * 10)] = 5; // posicao do Chefao
+        
         // preenche tabuleiro com armadilhas
         for (int i = 0; i < nArmadilhas; i++) {
             int x = (int) (Math.random() * comprimento);
