@@ -19,5 +19,4 @@ public class Armadilha extends Item {
             JOptionPane.showMessageDialog(null, "Você caiu em uma armadilha! \n Você perdeu " + super.getPontosDeVida() + " pontos de vida. Agora, você tem " + heroi.getVidaAtual() + " pontos de vida.");
         }
     }
-    // teste duda
 }

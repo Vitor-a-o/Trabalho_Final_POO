@@ -4,10 +4,6 @@
  */
 package dungeonfighter;
 
-/**
- *
- * @author Duda
- */
 public class Barbaro extends Heroi{
     public Barbaro(){
         super(10, 5, 8, "Barbaro");
