@@ -1,6 +1,7 @@
 
 package dungeonfighter;
 
+import java.awt.BorderLayout;
 import java.util.Scanner;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -9,9 +10,23 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.tools.Tool;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Image;
+import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent; 
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import javax.imageio.ImageIO;
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.SwingConstants;
+import javax.swing.border.EmptyBorder;
 
 public class DungeonFighter extends JFrame implements ActionListener{
 
@@ -26,21 +41,70 @@ public class DungeonFighter extends JFrame implements ActionListener{
         JFrame frame = new JFrame("Dungeon Fighter");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setExtendedState(MAXIMIZED_BOTH);
-        frame.setLayout(null);
+        frame.setLayout(new BorderLayout());
         frame.setVisible(true);
 
         Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
         int fheight = (int) size.getHeight();
         int fwidth = (int) size.getWidth();
 
+        // adicionando o logo do jogo
+        BufferedImage imagemOriginal = null;
+        try {
+            imagemOriginal = ImageIO.read(new File("Logo.png"));
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+        Image imagemRedimensionada = imagemOriginal.getScaledInstance(500, 400, Image.SCALE_SMOOTH);
+        ImageIcon imagemIcone = new ImageIcon(imagemRedimensionada);
+        JLabel labelImagem = new JLabel(imagemIcone);
+        frame.add(labelImagem, BorderLayout.NORTH);
+
+        // adicionando os botões usando GridBagLayout
+        JPanel painelBotoes = new JPanel();
+        painelBotoes.setLayout(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+
         JButton iniciar = new JButton("Iniciar Jogo");
         JButton debugar = new JButton("Debugar");
         JButton sair = new JButton("Sair");
+        
+        Font fonte = new Font("Arial", Font.BOLD, 20); 
+        iniciar.setFont(fonte);
+        debugar.setFont(fonte);
+        sair.setFont(fonte);
+        
+        iniciar.setPreferredSize(new Dimension(300, 100));
+        debugar.setPreferredSize(new Dimension(300, 100));
+        sair.setPreferredSize(new Dimension(300, 100));
+        
+        // botão iniciar:
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.weightx = 1.0;
+        gbc.insets = new Insets(10, 10, 10, 10); // margens para separar os botões
+        painelBotoes.add(iniciar, gbc);
 
-        iniciar.setBounds((fwidth/2) - 300, (fheight/2) + 100, 200, 30);
-        sair.setBounds((fwidth/2) - 100, (fheight/2) + 100, 200, 30);
-        debugar.setBounds((fwidth/2) + 100, (fheight/2) + 100, 200, 30);
+        // botão debugar:
+        gbc.gridx = 1;
+        gbc.gridy = 0;
+        painelBotoes.add(debugar, gbc);
 
+        // botão sair:
+        gbc.gridx = 2;
+        gbc.gridy = 0;
+        painelBotoes.add(sair, gbc);
+        frame.add(painelBotoes, BorderLayout.CENTER);
+        
+        JLabel textoDevs = new JLabel("Desenvolvedores: Eduarda Medeiros, Vitor Oliveira e Larissa Schonhofen");
+        textoDevs.setVerticalAlignment(SwingConstants.CENTER);
+        textoDevs.setHorizontalAlignment(SwingConstants.CENTER); 
+        textoDevs.setFont(fonte);
+        frame.add(textoDevs, BorderLayout.SOUTH);
+        
+        frame.setVisible(true);
+        
         iniciar.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e){
                 menu[0] = 1;
@@ -61,10 +125,6 @@ public class DungeonFighter extends JFrame implements ActionListener{
             }
         });
 
-        frame.add(iniciar);
-        frame.add(sair);
-        frame.add(debugar);
-
         while(menu[0] == 0){
             try{
                 Thread.sleep(1000);
@@ -72,7 +132,6 @@ public class DungeonFighter extends JFrame implements ActionListener{
                 e.printStackTrace();
             }
         }
-
         return menu[0];
     }
     
@@ -80,13 +139,75 @@ public class DungeonFighter extends JFrame implements ActionListener{
         JFrame frame = new JFrame("Escolha seu heroi");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setExtendedState(MAXIMIZED_BOTH);
-        JButton barbaro = new JButton("Barbaro");
+        
+        // implementando os botões:
+        JPanel painelBotoes = new JPanel();
+        painelBotoes.setLayout(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+
+        JButton barbaro = new JButton("Bárbaro");
         JButton guerreiro = new JButton("Guerreiro");
         JButton paladino = new JButton("Paladino");
+        
+        Font fonte = new Font("Arial", Font.BOLD, 20); 
+        barbaro.setFont(fonte);
+        guerreiro.setFont(fonte);
+        paladino.setFont(fonte);
+        
+        barbaro.setPreferredSize(new Dimension(300, 100));
+        guerreiro.setPreferredSize(new Dimension(300, 100));
+        paladino.setPreferredSize(new Dimension(300, 100));
 
-        barbaro.setBounds(50, 100, 150, 30);
-        guerreiro.setBounds(50, 150, 150, 30);
-        paladino.setBounds(50, 200, 150, 30);
+        JPanel painelNorte = new JPanel(new BorderLayout());
+        painelNorte.setBorder(BorderFactory.createEmptyBorder(50, 20, 20, 20)); // margens: cima, esquerda, baixo, direita
+        JLabel texto = new JLabel("Escolha sua classe: ", SwingConstants.CENTER);
+        texto.setFont(new Font("Arial", Font.BOLD, 40));
+        painelNorte.add(texto, BorderLayout.CENTER);
+        frame.add(painelNorte, BorderLayout.NORTH);
+        
+        // botão iniciar:
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.weightx = 1.0;
+        gbc.insets = new Insets(10, 10, 10, 10); // margens para separar os botões
+        painelBotoes.add(barbaro, gbc);
+
+        // botão debugar:
+        gbc.gridx = 1;
+        gbc.gridy = 0;
+        painelBotoes.add(guerreiro, gbc);
+
+        // botão sair:
+        gbc.gridx = 2;
+        gbc.gridy = 0;
+        painelBotoes.add(paladino, gbc);
+        frame.add(painelBotoes, BorderLayout.CENTER);
+        
+        JPanel painelDescricoes = new JPanel(new BorderLayout());
+
+        // Criar os JLabels
+        JLabel labelEsquerda = new JLabel("Habilidade especial do Bárbaro: GOLPE FURIOSO (Desfere um ataque que causa 50% a mais de dano)", SwingConstants.CENTER);
+        JLabel labelCentro = new JLabel("Habilidade especial do Paladino: RECUPERAÇÃO (Recupera 50% dos seus pontos de vida totais)", SwingConstants.CENTER);
+        JLabel labelDireita = new JLabel("Habilidade especial do Guerreiro: POSTURA DEFENSIVA (Aumenta sua defesa em 50% durante duas rodadas)", SwingConstants.CENTER);
+        labelEsquerda.setFont(fonte);
+        labelCentro.setFont(fonte);
+        labelDireita.setFont(fonte);
+        
+        // Adicionar bordas para afastar o texto das margens
+        labelEsquerda.setBorder(new EmptyBorder(20, 20, 20, 20)); // margens: cima, esquerda, inferior, direita
+        labelCentro.setBorder(new EmptyBorder(10, 20, 20, 20)); 
+        labelDireita.setBorder(new EmptyBorder(10, 20, 50, 20));
+
+       
+        // Adicionar os JLabels ao painel
+        painelDescricoes.add(labelEsquerda, BorderLayout.NORTH);
+        painelDescricoes.add(labelCentro, BorderLayout.CENTER);
+        painelDescricoes.add(labelDireita, BorderLayout.SOUTH);
+
+        // Adicionar o painel ao frame
+        frame.add(painelDescricoes, BorderLayout.SOUTH);
+        
+        frame.setVisible(true);
 
         final Heroi[] heroi = new Heroi[1];
 
@@ -110,13 +231,6 @@ public class DungeonFighter extends JFrame implements ActionListener{
                 frame.dispose();
             }
         });
-
-        frame.add(barbaro);
-        frame.add(guerreiro);
-        frame.add(paladino);
-
-        frame.setLayout(null);
-        frame.setVisible(true);
 
         while(heroi[0] == null){
             try{
@@ -150,19 +264,31 @@ public class DungeonFighter extends JFrame implements ActionListener{
         frame.setLayout(null);
 
         JLabel pontosLabel = new JLabel("Pontos restantes: 5");
+        JLabel explicaLabel = new JLabel("Cada ponto aumenta o atributo escolhido em 2.");
         JLabel ataqueLabel = new JLabel("Ataque atual: " + heroi.getAtaque());
         JLabel saudeLabel = new JLabel("Saude atual: " + heroi.getSaude());
         JLabel defesaLabel = new JLabel("Defesa atual: " + heroi.getDefesa());
-        JLabel mensagemConfirmacao = new JLabel("Voce ainda tem pontos para distribuir.");
+        JLabel mensagemConfirmacao = new JLabel("Você ainda tem pontos para distribuir.");
         
-        pontosLabel.setBounds(100, 20, 300, 30);
-        ataqueLabel.setBounds(100, 60, 300, 30);
-        saudeLabel.setBounds(100, 140, 300, 30);
-        defesaLabel.setBounds(100, 100, 300, 30);
-        mensagemConfirmacao.setBounds(100, 180, 300, 30);
-        mensagemConfirmacao.setVisible(false);
+        Font fonte = new Font("Arial", Font.BOLD, 30);
         
+        pontosLabel.setBounds(600, 0, 300, 100);
+        explicaLabel.setBounds(530, 50, 500, 100);
+        ataqueLabel.setBounds(600, 150, 300, 100);
+        defesaLabel.setBounds(600, 300, 300, 100);
+        saudeLabel.setBounds(600, 450, 300, 100);
+        mensagemConfirmacao.setBounds(550, 550, 500, 100);
+        mensagemConfirmacao.setVisible(true);
+        
+        pontosLabel.setFont(fonte);
+        explicaLabel.setFont(new Font("Arial", Font.PLAIN, 20));
+        ataqueLabel.setFont(fonte);
+        saudeLabel.setFont(fonte);
+        defesaLabel.setFont(fonte);
+        mensagemConfirmacao.setFont(new Font("Arial", Font.PLAIN, 20));
+
         frame.add(pontosLabel);
+        frame.add(explicaLabel);
         frame.add(ataqueLabel);
         frame.add(saudeLabel);
         frame.add(defesaLabel);
@@ -177,99 +303,21 @@ public class DungeonFighter extends JFrame implements ActionListener{
         JButton saudeMenos = new JButton("-");
         JButton confirmar = new JButton("Confirmar");
 
-        ataqueMais.setBounds(230, 60, 50, 30);
-        ataqueMenos.setBounds(20, 60, 50, 30);
-        defesaMais.setBounds(230, 100, 50, 30); 
-        defesaMenos.setBounds(20, 100, 50, 30);
-        saudeMais.setBounds(230, 140, 50, 30);
-        saudeMenos.setBounds(20, 140, 50, 30);
-        confirmar.setBounds(150, 280, 150, 30);
-
-        ataqueMais.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e){
-                if(pontosRestantes[0] > 0){
-                    heroi.setAtaque(heroi.getAtaque() + 2);
-                    pontosLabel.setText("Pontos restantes: " + --pontosRestantes[0]);
-                    ataqueLabel.setText("Ataque atual: " + heroi.getAtaque());
-                    ataqueAdd[0] += 1;
-                    mensagemConfirmacao.setVisible(false);
-                }
-            }
-        });
-
-        ataqueMenos.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e){
-                if(ataqueAdd[0] > 0){
-                    heroi.setAtaque(heroi.getAtaque() - 2);
-                    pontosLabel.setText("Pontos restantes: " + ++pontosRestantes[0]);
-                    ataqueLabel.setText("Ataque atual: " + heroi.getAtaque());
-                    ataqueAdd[0] -= 1;
-                    mensagemConfirmacao.setVisible(false);
-                }
-            }
-        });
-
-        defesaMais.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e){
-                if(pontosRestantes[0] > 0){
-                    heroi.setDefesa(heroi.getDefesa() + 2);
-                    pontosLabel.setText("Pontos restantes: " + --pontosRestantes[0]);
-                    defesaLabel.setText("Defesa atual: " + heroi.getDefesa());
-                    defesaAdd[0] += 1;
-                    mensagemConfirmacao.setVisible(false);
-                }
-            }
-        });
-
-        defesaMenos.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e){
-                if(defesaAdd[0] > 0){
-                    heroi.setDefesa(heroi.getDefesa() - 2);
-                    pontosLabel.setText("Pontos restantes: " + ++pontosRestantes[0]);
-                    defesaLabel.setText("Defesa atual: " + heroi.getDefesa());
-                    defesaAdd[0] -= 1;
-                    mensagemConfirmacao.setVisible(false);
-                }
-            }
-        });
-
-        saudeMais.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e){
-                if(pontosRestantes[0] > 0){
-                    heroi.setSaude(heroi.getSaude() + 2);
-                    pontosLabel.setText("Pontos restantes: " + --pontosRestantes[0]);
-                    saudeLabel.setText("Saude atual: " + heroi.getSaude());
-                    saudeAdd[0] += 1;
-                    mensagemConfirmacao.setVisible(false);
-                }
-            }
-        });
-
-        saudeMenos.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e){
-                if(saudeAdd[0] > 0){
-                    heroi.setSaude(heroi.getSaude() - 2);
-                    pontosLabel.setText("Pontos restantes: " + ++pontosRestantes[0]);
-                    saudeLabel.setText("Saude atual: " + heroi.getSaude());
-                    saudeAdd[0] -= 1;
-                    mensagemConfirmacao.setVisible(false);
-                }
-            }
-        });
-
-        confirmar.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e){
-                if(pontosRestantes[0] == 0){
-                    frame.dispose();
-                    onClose.run();
-                    confirmacao[0] = true;
-                }else{
-                    mensagemConfirmacao.setVisible(true);
-                }
-            }
-        });
-
+        ataqueMais.setBounds(300, 150, 100, 100);
+        ataqueMenos.setBounds(1000, 150, 100, 100); // x, y, largura, altura
+        defesaMais.setBounds(300, 300, 100, 100); 
+        defesaMenos.setBounds(1000, 300, 100, 100);
+        saudeMais.setBounds(300, 450, 100, 100);
+        saudeMenos.setBounds(1000, 450, 100, 100);
+        confirmar.setBounds(1150, 590, 200, 100);
         
+        ataqueMais.setFont(fonte);
+        ataqueMenos.setFont(fonte);
+        defesaMais.setFont(fonte);
+        defesaMenos.setFont(fonte);
+        saudeMais.setFont(fonte);
+        saudeMenos.setFont(fonte);
+        confirmar.setFont(new Font("Arial", Font.PLAIN, 20));
 
         frame.add(ataqueMais);
         frame.add(ataqueMenos);
@@ -281,6 +329,91 @@ public class DungeonFighter extends JFrame implements ActionListener{
 
         frame.setVisible(true);
 
+        ataqueMais.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e){
+                if(pontosRestantes[0] > 0){
+                    heroi.setAtaque(heroi.getAtaque() + 2);
+                    pontosLabel.setText("Pontos restantes: " + --pontosRestantes[0]);
+                    ataqueLabel.setText("Ataque atual: " + heroi.getAtaque());
+                    ataqueAdd[0] += 1;
+                    if(pontosRestantes[0] == 0) mensagemConfirmacao.setVisible(false);
+                }
+            }
+        });
+
+        ataqueMenos.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e){
+                if(ataqueAdd[0] > 0){
+                    heroi.setAtaque(heroi.getAtaque() - 2);
+                    pontosLabel.setText("Pontos restantes: " + ++pontosRestantes[0]);
+                    ataqueLabel.setText("Ataque atual: " + heroi.getAtaque());
+                    ataqueAdd[0] -= 1;
+                    mensagemConfirmacao.setVisible(true);
+                }
+            }
+        });
+
+        defesaMais.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e){
+                if(pontosRestantes[0] > 0){
+                    heroi.setDefesa(heroi.getDefesa() + 2);
+                    pontosLabel.setText("Pontos restantes: " + --pontosRestantes[0]);
+                    defesaLabel.setText("Defesa atual: " + heroi.getDefesa());
+                    defesaAdd[0] += 1;
+                    if(pontosRestantes[0] == 0) mensagemConfirmacao.setVisible(false);
+                }
+            }
+        });
+
+        defesaMenos.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e){
+                if(defesaAdd[0] > 0){
+                    heroi.setDefesa(heroi.getDefesa() - 2);
+                    pontosLabel.setText("Pontos restantes: " + ++pontosRestantes[0]);
+                    defesaLabel.setText("Defesa atual: " + heroi.getDefesa());
+                    defesaAdd[0] -= 1;
+                    mensagemConfirmacao.setVisible(true);
+                }
+            }
+        });
+
+        saudeMais.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e){
+                if(pontosRestantes[0] > 0){
+                    heroi.setSaude(heroi.getSaude() + 2);
+                    pontosLabel.setText("Pontos restantes: " + --pontosRestantes[0]);
+                    saudeLabel.setText("Saude atual: " + heroi.getSaude());
+                    saudeAdd[0] += 1;
+                    if(pontosRestantes[0] == 0) mensagemConfirmacao.setVisible(false);
+                }
+            }
+        });
+
+        saudeMenos.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e){
+                if(saudeAdd[0] > 0){
+                    heroi.setSaude(heroi.getSaude() - 2);
+                    pontosLabel.setText("Pontos restantes: " + ++pontosRestantes[0]);
+                    saudeLabel.setText("Saude atual: " + heroi.getSaude());
+                    saudeAdd[0] -= 1;
+                    mensagemConfirmacao.setVisible(true);
+                }
+            }
+        });
+
+        confirmar.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e){
+                if(pontosRestantes[0] == 0){
+                    mensagemConfirmacao.setVisible(false);
+                    frame.dispose();
+                    onClose.run();
+                    confirmacao[0] = true;
+                }else{
+                    mensagemConfirmacao.setVisible(true);
+                }
+            }
+        });
+
        while(confirmacao[0] == false){
             try{
                 Thread.sleep(1000);
@@ -288,39 +421,6 @@ public class DungeonFighter extends JFrame implements ActionListener{
                 e.printStackTrace();
             }
         }
-    }
-    
-    public static void revelarArmadilhas(Tabuleiro tabuleiro){
-       int linhaOuColuna = (int) (Math.random() * 2);
-       // se linhaOuColuna = 0, vai informar sobre a linha, se for 1, sobre a coluna
-       if(linhaOuColuna == 0){
-           int linha = (int) (Math.random() * 5);
-           boolean temArmadilha = false;
-           for (int i = 0; i < 9; i++){
-               if(tabuleiro.getEvento(linha,i) == 2 || tabuleiro.getEvento(linha,i) == 3){
-                   temArmadilha = true;
-               }
-           }
-           if(temArmadilha){
-               System.out.println("Na linha " + linha + ", tem pelo menos uma armadilha.");
-           }else{
-               System.out.println("Na linha " + linha + ", nao tem nenhuma armadilha.");
-           }
-       }else{
-           int coluna = (int) (Math.random() * 10);
-           boolean temArmadilha = false;
-           for (int i = 0; i < 5; i++){
-               if(tabuleiro.getEvento(i,coluna) == 2 || tabuleiro.getEvento(i,coluna) == 3){
-                   temArmadilha = true;
-               }
-           }
-           if(temArmadilha){
-               System.out.println("Na coluna " + coluna + ", tem pelo menos uma armadilha.");
-           }else{
-               System.out.println("Na coluna " + coluna + ", nao tem nenhuma armadilha.");
-           }
-       }
-       
     }
     
     public static void main(String[] args) {

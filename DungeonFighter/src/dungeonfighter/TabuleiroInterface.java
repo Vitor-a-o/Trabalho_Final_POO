@@ -8,6 +8,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import javax.swing.border.EmptyBorder;
 
 public class TabuleiroInterface extends JFrame {
     private Heroi heroi;
@@ -23,14 +24,19 @@ public class TabuleiroInterface extends JFrame {
     private JLabel textoDicas;
 
     public TabuleiroInterface(int nArmadilhas, int nMonstros, int nElixir, Heroi heroi) {
+        
         setTitle("Tabuleiro do Jogo");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(800, 600);
         setLayout(new BorderLayout());
+        setExtendedState(MAXIMIZED_BOTH);
         this.heroi = heroi;
         this.xHeroi = 0;
         this.yHeroi = 4;
-
+        
+        Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
+        int fheight = (int) size.getHeight();
+        int fwidth = (int) size.getWidth();
+        
         // objeto do tipo tabuleiro para gerar os eventos
         implementacaoTabuleiro = new Tabuleiro(nArmadilhas, nMonstros, nElixir);
         implementacaoTabuleiro.preencheTabuleiro();
@@ -68,25 +74,81 @@ public class TabuleiroInterface extends JFrame {
         }else{
             textoSuperior = new JLabel("Classe: Paladino", SwingConstants.CENTER);
         }
+        textoSuperior.setFont(new Font("Arial", Font.BOLD, 30));
         add(textoSuperior, BorderLayout.NORTH);
 
         // painel inferior para informar ataque, defesa, vida, elixir e dicas
         JPanel painelInferior = new JPanel();
         painelInferior.setLayout(new FlowLayout(FlowLayout.CENTER, 20, 10));
 
+        Font fonte = new Font("Arial", Font.BOLD, 18);
         textoAtaque = new JLabel("Ataque: " + heroi.getAtaque(), SwingConstants.CENTER);
         textoDefesa = new JLabel("Defesa: " + heroi.getDefesa(), SwingConstants.CENTER);
         textoVida = new JLabel("Vida: " + heroi.getVidaAtual(), SwingConstants.CENTER);
         textoElixir = new JLabel("Quantidade de Elixir: " + heroi.getQuantidadeElixir(), SwingConstants.CENTER);
         textoDicas = new JLabel("Dicas restantes: " + heroi.getDicas(), SwingConstants.CENTER);
+        
+        textoAtaque.setFont(fonte);
+        textoDefesa.setFont(fonte);
+        textoVida.setFont(fonte);
+        textoElixir.setFont(fonte);
+        textoDicas.setFont(fonte);
 
+        JButton botaoDica = new JButton("Usar dica");
+        botaoDica.setFont(fonte);
         painelInferior.add(textoAtaque);
         painelInferior.add(textoDefesa);
         painelInferior.add(textoVida);
         painelInferior.add(textoElixir);
         painelInferior.add(textoDicas);
+        botaoDica.setPreferredSize(new Dimension(120, 50)); // Largura de 200 e altura de 100 pixels
+        painelInferior.add(botaoDica);
+        
 
+        
         add(painelInferior, BorderLayout.SOUTH);
+        
+        // quando o botão da dica é clicado:
+        botaoDica.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(heroi.getDicas()>0){
+                    int linhaOuColuna = (int) (Math.random() * 2);// se linhaOuColuna = 0, vai informar sobre a linha, se for 1, sobre a coluna
+                    // se linhaOuColuna = 0, vai informar sobre a linha, se for 1, sobre a coluna
+                    if(linhaOuColuna == 0){
+                        int linha = (int) (Math.random() * 5);
+                        boolean temArmadilha = false;
+                        for (int i = 0; i < 9; i++){
+                            if(implementacaoTabuleiro.getEvento(linha,i) == 2 || implementacaoTabuleiro.getEvento(linha,i) == 3){
+                                temArmadilha = true;
+                            }
+                        }
+                        if(temArmadilha){
+                            JOptionPane.showMessageDialog(null, "Na linha " + linha + ", tem pelo menos uma armadilha.");
+                        }else{
+                            JOptionPane.showMessageDialog(null, "Na linha " + linha + ", nao tem nenhuma armadilha.");
+                        }
+                    }else{
+                        int coluna = (int) (Math.random() * 10);
+                        boolean temArmadilha = false;
+                        for (int i = 0; i < 5; i++){
+                            if(implementacaoTabuleiro.getEvento(i,coluna) == 2 || implementacaoTabuleiro.getEvento(i,coluna) == 3){
+                                temArmadilha = true;
+                            }
+                        }
+                        if(temArmadilha){
+                            JOptionPane.showMessageDialog(null, "Na coluna " + coluna + ", tem pelo menos uma armadilha.");
+                        }else{
+                            JOptionPane.showMessageDialog(null, "Na coluna " + coluna + ", nao tem nenhuma armadilha.");
+                        }
+                    }
+                    heroi.usaDica();
+                    atualizarStatus();
+                }else{
+                    JOptionPane.showMessageDialog(null, "Você não tem mais dicas para usar.");
+                }
+            }
+        });
     }
 
     private void atualizarInterface() {
