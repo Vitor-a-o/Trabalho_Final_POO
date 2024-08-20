@@ -10,12 +10,14 @@ package dungeonfighter;
  */
 public abstract class Heroi extends Personagem {
     private int quantidadeElixir;
+    private int quantidadeMaxElixir;
     private int dicas; // para evitar as armadilhas
     
     public Heroi(int ataque, int defesa, int saude, String nome){
         super(ataque, defesa, saude, nome);
         this.quantidadeElixir = 0;
         this.dicas = 3;
+        this.quantidadeMaxElixir = 3;
     }
     
     public int getDicas(){
@@ -47,4 +49,9 @@ public abstract class Heroi extends Personagem {
     public void incrementaElixir(){
         quantidadeElixir++;
     }
+    
+    public int getQuantidadeMaxElixir(){
+        return quantidadeMaxElixir;
+    }
+    
 }

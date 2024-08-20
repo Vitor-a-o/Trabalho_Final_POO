@@ -5,18 +5,20 @@
 
 package dungeonfighter;
 
-public class Armadilha {
-    int pontosDeVida;
-    Armadilha (int pontosDeVida){
-        this.pontosDeVida = pontosDeVida;
+import javax.swing.JOptionPane;
+
+public class Armadilha extends Item {
+    public Armadilha (int pontosDeVida){
+        super(pontosDeVida);
     }
-    public void tiraVida(Heroi heroi){
-        System.out.println("Voce caiu em uma armadilha!");
-        heroi.setVidaAtual(heroi.getVidaAtual()-3);
+    public void modificaVida (Heroi heroi){
+        JOptionPane.showMessageDialog(null, "Você caiu em uma armadilha!");
+        heroi.setVidaAtual(heroi.getVidaAtual()-super.getPontosDeVida());
         if(heroi.getVidaAtual() <= 0){
             heroi.setVivo(false);
         }else{
-            System.out.println("Voce perdeu " + pontosDeVida + " pontos de vida. Agora, voce tem " + heroi.getVidaAtual() + " pontos de vida.");
+            JOptionPane.showMessageDialog(null, "Você perdeu " + super.getPontosDeVida() + " pontos de vida. Agora, você tem " + heroi.getVidaAtual() + " pontos de vida.");
         }
     }
+    // teste duda
 }

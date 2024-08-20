@@ -129,7 +129,7 @@ public class DungeonFighter extends JFrame implements ActionListener{
 
     }
     
-    public static void distribuiPontos(Heroi heroi){
+    public static void distribuiPontos(Heroi heroi, Runnable onClose){
         final int[] pontosRestantes;
         pontosRestantes = new int[1];
         pontosRestantes[0] = 5;
@@ -261,6 +261,7 @@ public class DungeonFighter extends JFrame implements ActionListener{
             public void actionPerformed(ActionEvent e){
                 if(pontosRestantes[0] == 0){
                     frame.dispose();
+                    onClose.run();
                     confirmacao[0] = true;
                 }else{
                     mensagemConfirmacao.setVisible(true);
@@ -289,55 +290,6 @@ public class DungeonFighter extends JFrame implements ActionListener{
         }
     }
     
-    public static int checaPosicao(Heroi heroi, Tabuleiro tabuleiro, int x, int y){
-        int evento = tabuleiro.getEvento(x, y);
-        int pontosDeVida;
-        switch(evento){
-            case 0: // Nenhum evento na posição do tabuleiro
-                break;
-            case 2: // Armadilha de perda fixa
-                Armadilha a1 = new Armadilha(3);
-                a1.tiraVida(heroi);
-                if(heroi.getVivo() == false){
-                    return -1;
-                }
-                break;
-            case 3: // Armadilha de perda aleatoria (1 a 5)
-                Armadilha a2 = new Armadilha((int) (Math.random() * 5) + 1);
-                a2.tiraVida(heroi);
-                if(heroi.getVivo() == false){
-                    return -1;
-                }
-                break;
-            case 4: // Monstro comum
-                System.out.println("Voce encontrou um monstro!");
-                System.out.println("A batalha iniciou.");
-                Monstro comum = new MonstroNormal();
-                Batalha b1 = new Batalha(heroi,comum);
-                b1.iniciar();
-                if(!heroi.getVivo()) return -1;
-                break;
-            case 5: // Chefão
-                System.out.println("Voce encontrou o chefao! Prepare-se.");
-                System.out.println("A batalha iniciou.");
-                Monstro boss = new Chefao();
-                Batalha b2 = new Batalha(heroi,boss);
-                b2.iniciar();
-                if(!heroi.getVivo()) return -1;
-                else return 1;
-            case 6: // Elixir
-                heroi.incrementaElixir();
-                if(heroi.getQuantidadeElixir() == 3){
-                    System.out.println("Voce encontrou um elixir, mas voce nao tem mais capacidade para carregar outro elixir.");
-                }else{
-                    heroi.incrementaElixir();
-                    System.out.println("Voce encontrou um elixir! Agora, voce tem " + heroi.getQuantidadeElixir() + " elixir.");
-                }
-                break;
-        }
-        return 0;
-    }
-
     public static void revelarArmadilhas(Tabuleiro tabuleiro){
        int linhaOuColuna = (int) (Math.random() * 2);
        // se linhaOuColuna = 0, vai informar sobre a linha, se for 1, sobre a coluna
@@ -371,68 +323,18 @@ public class DungeonFighter extends JFrame implements ActionListener{
        
     }
     
-    public static void inicioJogo(Heroi heroi, Tabuleiro tabuleiro){
-        
-        JFrame frame = new JFrame("Dungeon Fighter");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-        frame.setLayout(null);
-        frame.setVisible(true);
-
-        Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
-        int fheight = (int) size.getHeight();
-        int fwidth = (int) size.getWidth();
-
-        JPanel statusHeroi = new JPanel();
-        statusHeroi.setLayout(null);
-        statusHeroi.setBounds((fwidth - 300), 0, 300, 300);
-
-        JLabel nomeHeroi = new JLabel("Nome: " + heroi.getNome());
-        JLabel ataqueHeroi = new JLabel("Ataque: " + heroi.getAtaque());
-        JLabel defesaHeroi = new JLabel("Defesa: " + heroi.getDefesa());
-        JLabel saudeHeroi = new JLabel("Saude: " + heroi.getSaude());
-        JLabel elixirHeroi = new JLabel("Elixir: " + heroi.getQuantidadeElixir());
-
-        nomeHeroi.setBounds(10, 10, 300, 30);
-        ataqueHeroi.setBounds(10, 50, 300, 30);
-        defesaHeroi.setBounds(10, 90, 300, 30);
-        saudeHeroi.setBounds(10, 130, 300, 30);
-        elixirHeroi.setBounds(10, 170, 300, 30);
-
-        statusHeroi.add(nomeHeroi);
-        statusHeroi.add(ataqueHeroi);
-        statusHeroi.add(defesaHeroi);
-        statusHeroi.add(saudeHeroi);
-        statusHeroi.add(elixirHeroi);
-
-        JPanel batalha = new JPanel();
-        batalha.setLayout(null);
-        batalha.setBounds((fwidth - 300), 320, 300, 300);
-        batalha.setVisible(true);
-
-        JButton atacar = new JButton("Atacar");
-        JButton especial = new JButton("Habilidade Especial");
-        JButton elixir = new JButton("Elixir");
-
-        atacar.setBounds(10, 10, 150, 30);
-        especial.setBounds(10, 50, 150, 30);
-        elixir.setBounds(10, 90, 150, 30);
-
-        
-
-        frame.add(statusHeroi);
-
-        int continua = 0, xHeroi = 0, yHeroi = 4, escolha;
-        
-    }
-    
     public static void main(String[] args) {
         int menu = jogo();
         if(menu == 1){
             Heroi heroi = escolheHeroi();
-            distribuiPontos(heroi);
-            Tabuleiro tabuleiro = new Tabuleiro(5, 5, 5);
-            inicioJogo(heroi, tabuleiro);
+            distribuiPontos(heroi, new Runnable(){
+            @Override
+            public void run() {
+                // Ação que será executada após a janela de distribuição de pontos ser fechada
+                TabuleiroInterface tabuleiroInterface = new TabuleiroInterface(5, 3, 4, heroi); // Exemplo com 5 armadilhas, 3 monstros, 2 elixires
+                tabuleiroInterface.setVisible(true); // Agora, a janela do tabuleiro é aberta
+            }
+        });
         }else{
             System.out.println("Debugando...");
         }
