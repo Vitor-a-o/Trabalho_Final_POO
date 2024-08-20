@@ -18,6 +18,8 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -43,7 +45,7 @@ public class DungeonFighter extends JFrame implements ActionListener{
         // carrega a imagem
         BufferedImage imagemOriginal = null;
         try {
-            imagemOriginal = ImageIO.read(new File("Logo.png"));
+            imagemOriginal = ImageIO.read(new File("DungeonFighter/resources/Logo.png"));
         } catch (IOException e) {
             e.printStackTrace();
             System.exit(1);

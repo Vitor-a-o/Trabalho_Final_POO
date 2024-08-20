@@ -95,7 +95,7 @@ class Batalha {
         
         BufferedImage imagemHeroi = null;
         try {   
-            imagemHeroi = ImageIO.read(new File("heroi.jpg"));
+            imagemHeroi = ImageIO.read(new File("DungeonFighter/resources/heroi.jpg"));
         } catch (IOException e) {
             e.printStackTrace();
             System.exit(1);
@@ -120,7 +120,7 @@ class Batalha {
         
         BufferedImage imagemMonstro = null;
         try {
-            imagemMonstro = ImageIO.read(new File("monstro.png"));
+            imagemMonstro = ImageIO.read(new File("DungeonFighter/resources/monstro.png"));
         } catch (IOException e) {
             e.printStackTrace();
             System.exit(1);
