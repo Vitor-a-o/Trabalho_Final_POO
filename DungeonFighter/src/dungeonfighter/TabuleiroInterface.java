@@ -4,10 +4,17 @@
  */
 package dungeonfighter;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.util.Random;
+import java.util.concurrent.CountDownLatch;
+
 import javax.swing.border.EmptyBorder;
 
 public class TabuleiroInterface extends JFrame {
@@ -33,10 +40,6 @@ public class TabuleiroInterface extends JFrame {
         this.heroi = heroi;
         this.xHeroi = 0;
         this.yHeroi = 4;
-        
-        Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
-        int fheight = (int) size.getHeight();
-        int fwidth = (int) size.getWidth();
         
         // objeto do tipo tabuleiro para gerar os eventos
         implementacaoTabuleiro = new Tabuleiro(nArmadilhas, nMonstros, nElixir);
@@ -189,7 +192,7 @@ public class TabuleiroInterface extends JFrame {
         textoElixir.setText("Quantidade de Elixir: " + heroi.getQuantidadeElixir());
         textoDicas.setText("Dicas restantes: " + heroi.getDicas());
     }
-    
+
     private class BotaoActionListener implements ActionListener {
         private int linha, coluna;
 
@@ -253,31 +256,53 @@ public class TabuleiroInterface extends JFrame {
                     yHeroi = coluna;
 
                     atualizarInterface();
-                    Monstro comum = new MonstroNormal();
-                    Batalha b1 = new Batalha(heroi,comum);
-                    b1.iniciar();
-                    if(heroi.getVivo() == false){
-                        JOptionPane.showMessageDialog(null, "Você perdeu!");
-                        dispose();
-                    }else{
-                        int atributo =  (int)(Math.random() * 3);
-                        int valor = (int)(Math.random() * 3) + 2;
-                        if(atributo == 0){
-                            heroi.setAtaque(heroi.getAtaque()+valor);
-                            JOptionPane.showMessageDialog(null, "Você venceu a batalha! Seu ataque aumentou " + valor + " pontos.");
+
+                    Monstro monstro = new MonstroNormal();
+                    Batalha batalha = new Batalha(heroi, monstro);
+
+                    SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
+                        @Override
+                        protected Void doInBackground() throws Exception {
+                            batalha.iniciar();
+                            while(batalha.getBatalhaAtiva() == true){
+                                try {
+                                    Thread.sleep(1000);
+                                } catch (InterruptedException ex) {
+                                    Thread.currentThread().interrupt();
+                                }
+                            }
+                            return null;
                         }
-                        if(atributo == 1){
-                            heroi.setDefesa(heroi.getDefesa()+valor);
-                            JOptionPane.showMessageDialog(null, "Você venceu a batalha! Seu defesa aumentou " + valor + " pontos.");
+
+                        protected void done() {
+                            if(heroi.getVivo() == false){
+                                JOptionPane.showMessageDialog(null, "Você perdeu!");
+                                dispose();
+                            }else{
+                                int atributo =  (int)(Math.random() * 3);
+                                int valor = (int)(Math.random() * 3) + 2;
+                                if(atributo == 0){
+                                    heroi.setAtaque(heroi.getAtaque()+valor);
+                                    JOptionPane.showMessageDialog(null, "Você venceu a batalha! Seu ataque aumentou " + valor + " pontos.");
+                                }
+                                if(atributo == 1){
+                                    heroi.setDefesa(heroi.getDefesa()+valor);
+                                    JOptionPane.showMessageDialog(null, "Você venceu a batalha! Seu defesa aumentou " + valor + " pontos.");
+                                }
+                                if(atributo == 2){
+                                    heroi.setVidaTotal(heroi.getVidaTotal()+valor);
+                                    heroi.setVidaAtual(heroi.getVidaAtual()+valor);
+                                    JOptionPane.showMessageDialog(null, "Você venceu a batalha! Sua vida aumentou " + valor + " pontos.");
+                                }
+                            }
+                            setVisible(true);
+                            atualizarStatus();
                         }
-                        if(atributo == 2){
-                            heroi.setVidaTotal(heroi.getVidaTotal()+valor);
-                            heroi.setVidaAtual(heroi.getVidaAtual()+valor);
-                            JOptionPane.showMessageDialog(null, "Você venceu a batalha! Sua vida aumentou " + valor + " pontos.");
-                        }
-                    }            
-                    atualizarStatus();
+                    };
+                    setVisible(false);
+                    worker.execute();
                 }
+                
                 if (implementacaoTabuleiro.getEvento(linha, coluna) == 5) { // batalha contra chefão
                     implementacaoTabuleiro.setEvento(1, linha, coluna);
                     implementacaoTabuleiro.setEvento(0, xHeroi, yHeroi);
@@ -286,16 +311,36 @@ public class TabuleiroInterface extends JFrame {
                     yHeroi = coluna;
 
                     atualizarInterface();
-                    Monstro boss = new Chefao();
-                    Batalha b1 = new Batalha(heroi,boss);
-                    b1.iniciar();
-                    if(heroi.getVivo() == false){
-                        JOptionPane.showMessageDialog(null, "Você perdeu o jogo!");
-                        dispose();
-                    }else{
-                        JOptionPane.showMessageDialog(null, "Você venceu o jogo!");
-                        dispose();
-                    }
+
+                    Monstro monstro = new Chefao();
+                    Batalha batalha = new Batalha(heroi, monstro);
+
+                    SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
+                        @Override
+                        protected Void doInBackground() throws Exception {
+                            batalha.iniciar();
+                            while(batalha.getBatalhaAtiva() == true){
+                                try {
+                                    Thread.sleep(1000);
+                                } catch (InterruptedException ex) {
+                                    Thread.currentThread().interrupt();
+                                }
+                            }
+                            return null;
+                        }
+
+                        protected void done() {
+                            if(heroi.getVivo() == false){
+                                JOptionPane.showMessageDialog(null, "Você perdeu o jogo!");
+                                dispose();
+                            }else{
+                                JOptionPane.showMessageDialog(null, "Você venceu o jogo!");
+                                dispose();
+                            }
+                        }
+                    };
+                    setVisible(false);
+                    worker.execute();
                 }
                 if (implementacaoTabuleiro.getEvento(linha, coluna) == 6) { // elixir
                     implementacaoTabuleiro.setEvento(1, linha, coluna);

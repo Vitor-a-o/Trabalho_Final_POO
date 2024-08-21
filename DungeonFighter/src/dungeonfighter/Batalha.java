@@ -5,12 +5,13 @@
 package dungeonfighter;
 
 import java.awt.BorderLayout;
+import java.util.concurrent.CountDownLatch;
 import java.awt.Dimension;
 import java.awt.Font;
-import static java.awt.Frame.MAXIMIZED_BOTH;
-import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -24,15 +25,19 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 
-class Batalha {
+public class Batalha extends JFrame {
     private Heroi heroi;
     private Monstro monstro;
     private Random random;
     private boolean usouEspecial;
-    private int turnosEspecial; // controla quantos turnos ainda tem pra usar o especial
+    private int turnosEspecial;
+    private boolean batalhaAtiva;
+    // controla quantos turnos ainda tem pra usar o especial
     // 2 para o guerreiro, 1 para o barbaro
 
     public Batalha(Heroi heroi, Monstro monstro) {
@@ -40,12 +45,13 @@ class Batalha {
         this.monstro = monstro;
         this.random = new Random();
         this.usouEspecial = false;
+        this.batalhaAtiva = true;
         
-        JFrame frame = new JFrame("Batalha");
+        setTitle("Batalha");
         
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(1200, 600); 
-        frame.setLayout(new BorderLayout());
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setSize(Toolkit.getDefaultToolkit().getScreenSize());
+        setLayout(new BorderLayout());
         
         // textos informativos:  
                   
@@ -92,7 +98,6 @@ class Batalha {
         painelDireito.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         painelDireito.add(painelTextosMonstro); 
         
-        
         BufferedImage imagemHeroi = null;
         try {   
             imagemHeroi = ImageIO.read(new File("DungeonFighter/resources/heroi.jpg"));
@@ -107,7 +112,7 @@ class Batalha {
         painelHeroi.add(labelHeroi, BorderLayout.CENTER);
         Image imagemRedimensionadaHeroi = imagemHeroi.getScaledInstance(300, 150, Image.SCALE_SMOOTH);
         ImageIcon imagemHeroiIcone = new ImageIcon(imagemRedimensionadaHeroi);
-        labelHeroi.setIcon(imagemHeroiIcone);   
+        labelHeroi.setIcon(imagemHeroiIcone);
         
         painelEsquerdo.add(painelHeroi);
         
@@ -116,7 +121,7 @@ class Batalha {
         labelTituloHeroi.setHorizontalAlignment(JLabel.CENTER);
         painelEsquerdo.add(labelTituloHeroi);
 
-        frame.add(painelEsquerdo, BorderLayout.WEST);
+        add(painelEsquerdo, BorderLayout.WEST);
         
         BufferedImage imagemMonstro = null;
         try {
@@ -141,7 +146,7 @@ class Batalha {
         labelTituloMonstro.setHorizontalAlignment(JLabel.CENTER);
         painelDireito.add(labelTituloMonstro);
 
-        frame.add(painelDireito, BorderLayout.EAST);
+        add(painelDireito, BorderLayout.EAST);
         
         
          // painel dos botões:
@@ -167,29 +172,21 @@ class Batalha {
         
         JPanel painelContainer = new JPanel(new BorderLayout());
         painelContainer.add(painelBotoes, BorderLayout.CENTER);
-        frame.add(painelContainer, BorderLayout.CENTER);
-        
-        frame.setVisible(true);
-    }
+        add(painelContainer, BorderLayout.CENTER);
 
-    public void iniciar() {
-        Scanner scanner = new Scanner(System.in);
-        while (heroi.getVivo() && monstro.getVivo()) {
-            System.out.println("Di  gite qual acao deseja tomar: ");
-            System.out.println("1) Atacar");
-            System.out.println("2) Habilidade especial");
-            System.out.println("3) Elixir (Quantidade atual: " + heroi.getQuantidadeElixir() + ")");
-            int escolha = scanner.nextInt();
-            if(escolha != 1 && escolha != 2 && escolha != 3){
-                System.out.println("Escolha invalida.");
-            }
-            if(escolha == 1){
+        atacar.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
                 turno(heroi, monstro);
-                if (monstro.getVivo()) {
-                    turno(monstro, heroi);
-                }
+                verificarFimBatalha();
+                vida.setText("Vida: " + heroi.getVidaAtual());
+                vidaMonstro.setText("Vida: " + monstro.getVidaAtual());
             }
-            if(escolha == 2){
+        });
+
+        usarHabilidade.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
                 if(!usouEspecial){
                     if(heroi instanceof Barbaro){
                         turnosEspecial = 1;
@@ -200,11 +197,11 @@ class Batalha {
                     if(heroi instanceof Paladino){
                         if(heroi.getVidaAtual() + 0.5*heroi.getVidaAtual() <= heroi.getVidaTotal()){
                             heroi.setVidaAtual((int)(heroi.getVidaAtual()*1.5));
+
                         }else{
                             heroi.setVidaAtual(heroi.getVidaTotal());
                         }
-                        System.out.println("Habilidade Especial: Recuperacao");
-                        System.out.println("Voce recuperou 50% da sua vida.");
+                        JOptionPane.showMessageDialog(null, "Você usou a habilidade especial e recuperou 50% da sua vida.");
                     }
                     usouEspecial = true;
                     turno(heroi, monstro);
@@ -212,23 +209,41 @@ class Batalha {
                         turno(monstro, heroi);
                     }
                 }else{
-                    System.out.println("Voce ja usou a habilidade especial.");
+                    JOptionPane.showMessageDialog(null, "Você já usou a habilidade especial nessa batalha.");
                 }
             }
-            if(escolha == 3){
+        });
+
+        usarElixir.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
                 if(heroi.getQuantidadeElixir() > 0){
                     heroi.usarElixir();                
                 }else{
-                    System.out.println("Voce nao tem elixir.");
+                    JOptionPane.showMessageDialog(null, "Você não tem elixir.");
                 }
             }
-        }
-        if (heroi.getVivo()) {
-            System.out.println("O heroi venceu a batalha!");
-            return;
-        } else {
-            System.out.println("Fim de jogo.");
-            return;
+        });
+
+    }
+
+    public void atualizarVida(Heroi heroi, Monstro monstro) {
+        // atualiza a vida do herói e do monstro
+        
+    }
+
+    public void iniciar() {
+        SwingUtilities.invokeLater(() -> setVisible(true));
+    }
+
+    public boolean getBatalhaAtiva() {
+        return batalhaAtiva;
+    }
+
+    private void verificarFimBatalha(){
+        if(!heroi.getVivo() || !monstro.getVivo()){
+            batalhaAtiva = false;
+            dispose();
         }
     }
 
@@ -241,8 +256,6 @@ class Batalha {
         if((atacante instanceof Barbaro) && (turnosEspecial>0)){
             ataqueRodada *= 1.5;
             turnosEspecial--;
-            System.out.println("Habilidade Especial: Golpe Furioso");
-            System.out.println("Seu ataque sera 50% mais forte.");
         }
         int defesaRodada = defensor.getDefesa() + defesaBonus;
         if((defensor instanceof Guerreiro) && (turnosEspecial>0)){

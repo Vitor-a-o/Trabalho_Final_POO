@@ -19,9 +19,11 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Random;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
@@ -134,7 +136,6 @@ public class DungeonFighter extends JFrame implements ActionListener{
         }
         return menu[0];
     }
-
     
     public static Heroi escolheHeroi(){
         JFrame frame = new JFrame("Escolha seu heroi");
@@ -418,7 +419,7 @@ public class DungeonFighter extends JFrame implements ActionListener{
             }
         }
     }
-    
+
     public static void main(String[] args) {
         int menu = jogo();
         if(menu == 1){
@@ -426,9 +427,8 @@ public class DungeonFighter extends JFrame implements ActionListener{
             distribuiPontos(heroi, new Runnable(){
             @Override
             public void run() {
-                // Ação que será executada após a janela de distribuição de pontos ser fechada
                 TabuleiroInterface tabuleiroInterface = new TabuleiroInterface(5, 3, 4, heroi); // Exemplo com 5 armadilhas, 3 monstros, 2 elixires
-                tabuleiroInterface.setVisible(true); // Agora, a janela do tabuleiro é aberta
+                tabuleiroInterface.setVisible(true);
             }
         });
         }else{
