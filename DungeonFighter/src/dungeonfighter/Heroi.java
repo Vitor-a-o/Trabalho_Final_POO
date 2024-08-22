@@ -37,12 +37,6 @@ public abstract class Heroi extends Personagem {
     }
     
     public void usarElixir(){
-        if(super.getVidaAtual() + 10 <= super.getVidaTotal()){
-            super.setVidaAtual(super.getVidaAtual() + 10);
-        }else{
-            super.setVidaAtual(super.getVidaTotal());
-        }
-        System.out.println("Voce usou um elixir.");
         quantidadeElixir--;
     }
     

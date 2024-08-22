@@ -43,11 +43,11 @@ public class DungeonFighter extends JFrame implements ActionListener{
         frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
         frame.setLayout(new BorderLayout());
         frame.setVisible(true);
-
+        
         // carrega a imagem
         BufferedImage imagemOriginal = null;
         try {
-            imagemOriginal = ImageIO.read(new File("DungeonFighter/resources/Logo.png"));
+            imagemOriginal = ImageIO.read(new File("src/Logo.png"));
         } catch (IOException e) {
             e.printStackTrace();
             System.exit(1);
@@ -427,12 +427,19 @@ public class DungeonFighter extends JFrame implements ActionListener{
             distribuiPontos(heroi, new Runnable(){
             @Override
             public void run() {
-                TabuleiroInterface tabuleiroInterface = new TabuleiroInterface(5, 3, 4, heroi); // Exemplo com 5 armadilhas, 3 monstros, 2 elixires
+                TabuleiroInterface tabuleiroInterface = new TabuleiroInterface(5, 3, 4, heroi,false); // Exemplo com 5 armadilhas, 3 monstros, 2 elixires
                 tabuleiroInterface.setVisible(true);
             }
         });
         }else{
-            System.out.println("Debugando...");
+            Heroi heroi = escolheHeroi();
+            distribuiPontos(heroi, new Runnable(){
+            @Override
+            public void run() {
+                TabuleiroInterface tabuleiroInterface = new TabuleiroInterface(5, 3, 4, heroi,true); // Exemplo com 5 armadilhas, 3 monstros, 2 elixires
+                tabuleiroInterface.setVisible(true);
+            }
+        });
         }
     }
 }

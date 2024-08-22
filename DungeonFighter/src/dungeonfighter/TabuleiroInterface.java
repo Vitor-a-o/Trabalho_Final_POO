@@ -22,6 +22,7 @@ public class TabuleiroInterface extends JFrame {
     private JButton[][] botoes;
     private Tabuleiro implementacaoTabuleiro; 
     private int xHeroi, yHeroi;
+    private boolean debug;
     
     // textos informativos dos atributos do herói:
     private JLabel textoAtaque;
@@ -30,7 +31,7 @@ public class TabuleiroInterface extends JFrame {
     private JLabel textoElixir;
     private JLabel textoDicas;
 
-    public TabuleiroInterface(int nArmadilhas, int nMonstros, int nElixir, Heroi heroi) {
+    public TabuleiroInterface(int nArmadilhas, int nMonstros, int nElixir, Heroi heroi, boolean debug) {
         
         setTitle("Tabuleiro do Jogo");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -40,6 +41,7 @@ public class TabuleiroInterface extends JFrame {
         this.heroi = heroi;
         this.xHeroi = 0;
         this.yHeroi = 4;
+        this.debug = debug;
         
         // objeto do tipo tabuleiro para gerar os eventos
         implementacaoTabuleiro = new Tabuleiro(nArmadilhas, nMonstros, nElixir);
@@ -68,7 +70,7 @@ public class TabuleiroInterface extends JFrame {
         add(painelTabuleiro, BorderLayout.CENTER);
         
         atualizarInterface();
-
+        
         // borda superior:
         JLabel textoSuperior;
         if(heroi instanceof Barbaro){
@@ -166,19 +168,29 @@ public class TabuleiroInterface extends JFrame {
                         botoes[i][j].setText("H"); // herói
                         break;
                     case 2:
-                        botoes[i][j].setText("AF"); // armadilha fixa
+                        if(debug == true){
+                            botoes[i][j].setText("AF"); // armadilha fixa 
+                        }
                         break;
                     case 3:
-                        botoes[i][j].setText("AA"); // armadilha aleatoria
+                        if(debug == true){
+                            botoes[i][j].setText("AA"); // armadilha aleatoria                            
+                        }
                         break;
                     case 4:
-                        botoes[i][j].setText("M"); // monstro normal
+                        if(debug == true){
+                            botoes[i][j].setText("M"); // monstro normal
+                        }
                         break;
                     case 5:
-                        botoes[i][j].setText("C"); // chefão
+                        if(debug == true){
+                            botoes[i][j].setText("C"); // chefão                          
+                        }
                         break;
                     case 6:
-                        botoes[i][j].setText("E"); // elixir
+                        if(debug == true){
+                            botoes[i][j].setText("E"); // elixir
+                        }
                         break;
                 }
             }
@@ -237,9 +249,9 @@ public class TabuleiroInterface extends JFrame {
 
                     xHeroi = linha;
                     yHeroi = coluna;
-
+                        
                     atualizarInterface();
-                    
+
                     Armadilha af = new Armadilha((int)((Math.random() * 5) + 1));
                     af.modificaVida(heroi);
                     if(heroi.getVivo() == false){
@@ -331,10 +343,10 @@ public class TabuleiroInterface extends JFrame {
 
                         protected void done() {
                             if(heroi.getVivo() == false){
-                                JOptionPane.showMessageDialog(null, "Você perdeu o jogo!");
+                                JOptionPane.showMessageDialog(null, "Você perdeu o jogo! :(");
                                 dispose();
                             }else{
-                                JOptionPane.showMessageDialog(null, "Você venceu o jogo!");
+                                JOptionPane.showMessageDialog(null, "Você venceu o jogo! :D");
                                 dispose();
                             }
                         }
@@ -350,6 +362,7 @@ public class TabuleiroInterface extends JFrame {
                     yHeroi = coluna;
 
                     atualizarInterface();
+                        
                     if(heroi.getQuantidadeMaxElixir() == heroi.getQuantidadeElixir()){
                         JOptionPane.showMessageDialog(null, "Você encontrou um elixir, mas você não tem espaço para carregar outro elixir.");
                     }else{

@@ -39,7 +39,10 @@ public class Batalha extends JFrame {
     private boolean batalhaAtiva;
     // controla quantos turnos ainda tem pra usar o especial
     // 2 para o guerreiro, 1 para o barbaro
-
+    
+    private JLabel vidaMonstro;
+    private JLabel vida;
+    
     public Batalha(Heroi heroi, Monstro monstro) {
         this.heroi = heroi;
         this.monstro = monstro;
@@ -60,7 +63,7 @@ public class Batalha extends JFrame {
         
         JLabel ataque = new JLabel("Ataque: " + heroi.getAtaque());
         JLabel defesa = new JLabel("Defesa: " + heroi.getDefesa());
-        JLabel vida = new JLabel("Vida: " + heroi.getVidaAtual());
+        vida = new JLabel("Vida: " + heroi.getVidaAtual());
         Font fonte = new Font("Arial", Font.BOLD, 20); 
         ataque.setFont(fonte);
         defesa.setFont(fonte);
@@ -82,7 +85,7 @@ public class Batalha extends JFrame {
         
         JLabel ataqueMonstro = new JLabel("Ataque: " + monstro.getAtaque());
         JLabel defesaMonstro = new JLabel("Defesa: " + monstro.getDefesa());
-        JLabel vidaMonstro = new JLabel("Vida: " + monstro.getVidaAtual());
+        vidaMonstro = new JLabel("Vida: " + monstro.getVidaAtual());
         ataqueMonstro.setFont(fonte);
         defesaMonstro.setFont(fonte);
         vidaMonstro.setFont(fonte);
@@ -99,8 +102,9 @@ public class Batalha extends JFrame {
         painelDireito.add(painelTextosMonstro); 
         
         BufferedImage imagemHeroi = null;
+
         try {   
-            imagemHeroi = ImageIO.read(new File("DungeonFighter/resources/heroi.jpg"));
+            imagemHeroi = ImageIO.read(new File("src/heroi.jpg"));
         } catch (IOException e) {
             e.printStackTrace();
             System.exit(1);
@@ -125,7 +129,7 @@ public class Batalha extends JFrame {
         
         BufferedImage imagemMonstro = null;
         try {
-            imagemMonstro = ImageIO.read(new File("DungeonFighter/resources/monstro.png"));
+            imagemMonstro = ImageIO.read(new File("src/monstro.png"));
         } catch (IOException e) {
             e.printStackTrace();
             System.exit(1);
@@ -179,8 +183,12 @@ public class Batalha extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 turno(heroi, monstro);
                 verificarFimBatalha();
-                vida.setText("Vida: " + heroi.getVidaAtual());
-                vidaMonstro.setText("Vida: " + monstro.getVidaAtual());
+                atualizarStatus();
+                if (monstro.getVivo()){
+                    JOptionPane.showMessageDialog(null, "É a vez do inimigo de atacar.");
+                }
+                turno(monstro, heroi);
+                atualizarStatus();
             }
         });
 
@@ -190,6 +198,7 @@ public class Batalha extends JFrame {
                 if(!usouEspecial){
                     if(heroi instanceof Barbaro){
                         turnosEspecial = 1;
+                        JOptionPane.showMessageDialog(null, "Habilidade Especial: Golpe Furioso \nSeu próximo ataque causará 50% mais dano.");
                     }
                     if(heroi instanceof Guerreiro){
                         turnosEspecial = 2;
@@ -197,15 +206,16 @@ public class Batalha extends JFrame {
                     if(heroi instanceof Paladino){
                         if(heroi.getVidaAtual() + 0.5*heroi.getVidaAtual() <= heroi.getVidaTotal()){
                             heroi.setVidaAtual((int)(heroi.getVidaAtual()*1.5));
-
                         }else{
                             heroi.setVidaAtual(heroi.getVidaTotal());
                         }
-                        JOptionPane.showMessageDialog(null, "Você usou a habilidade especial e recuperou 50% da sua vida.");
+                        JOptionPane.showMessageDialog(null, "Habilidade Especial: Recuperação \n Você recuperou 50% da sua vida.");
+                        vida.setText("Vida: " + heroi.getVidaAtual());
                     }
                     usouEspecial = true;
                     turno(heroi, monstro);
                     if (monstro.getVivo()) {
+                        JOptionPane.showMessageDialog(null, "É a vez do inimigo de atacar.");
                         turno(monstro, heroi);
                     }
                 }else{
@@ -217,27 +227,36 @@ public class Batalha extends JFrame {
         usarElixir.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                Elixir elixir = new Elixir(10);
                 if(heroi.getQuantidadeElixir() > 0){
-                    heroi.usarElixir();                
-                }else{
-                    JOptionPane.showMessageDialog(null, "Você não tem elixir.");
+                    elixir.modificaVida(heroi);
+                    vida.setText("Vida: " + heroi.getVidaAtual());
+                    JOptionPane.showMessageDialog(null, "É a vez do inimigo de atacar.");
+                    turno(monstro, heroi);
+                }
+                else{
+                    JOptionPane.showMessageDialog(null, "Você não tem nenhum elixir para usar.");
                 }
             }
         });
-
-    }
-
-    public void atualizarVida(Heroi heroi, Monstro monstro) {
-        // atualiza a vida do herói e do monstro
-        
     }
 
     public void iniciar() {
         SwingUtilities.invokeLater(() -> setVisible(true));
+        if(monstro instanceof Chefao){
+            JOptionPane.showMessageDialog(null, "A batalha contra o chefão iniciou!");
+        }else{
+            JOptionPane.showMessageDialog(null, "Você encontrou um monstro!");
+        }
     }
 
     public boolean getBatalhaAtiva() {
         return batalhaAtiva;
+    }
+    
+    public void atualizarStatus(){
+        vida.setText("Vida: " + heroi.getVidaAtual());
+        vidaMonstro.setText("Vida: " + monstro.getVidaAtual());
     }
 
     private void verificarFimBatalha(){
@@ -247,45 +266,46 @@ public class Batalha extends JFrame {
         }
     }
 
-    private void turno(Personagem atacante, Personagem defensor) {
-        
-        int ataqueBonus = random.nextInt(6); // sorteia um número de 0 a 5 pra somar ao ataque
-        int defesaBonus = random.nextInt(6); // sorteia um número de 0 a 5 pra somar a defesa
+        private void turno(Personagem atacante, Personagem defensor) {
 
-        int ataqueRodada = atacante.getAtaque() + ataqueBonus;
-        if((atacante instanceof Barbaro) && (turnosEspecial>0)){
-            ataqueRodada *= 1.5;
-            turnosEspecial--;
-        }
-        int defesaRodada = defensor.getDefesa() + defesaBonus;
-        if((defensor instanceof Guerreiro) && (turnosEspecial>0)){
-            defesaRodada *= 1.5;
-            turnosEspecial--;
-            System.out.println("Habilidade Especial: Postura Defensiva");
-            System.out.println("Sua defesa sera 50% mais eficaz por mais " + turnosEspecial + " turnos.");
-        }
-        
+            int ataqueBonus = random.nextInt(6); // sorteia um número de 0 a 5 pra somar ao ataque
+            int defesaBonus = random.nextInt(6); // sorteia um número de 0 a 5 pra somar a defesa
+
+            int ataqueRodada = atacante.getAtaque() + ataqueBonus;
+            if((atacante instanceof Barbaro) && (turnosEspecial>0)){
+                ataqueRodada *= 1.5;
+                turnosEspecial--;
+                JOptionPane.showMessageDialog(null, "Seu ataque será 50% mais forte esta rodada.");
+            }
+            int defesaRodada = defensor.getDefesa() + defesaBonus;
+            if((defensor instanceof Guerreiro) && (turnosEspecial>0)){
+                defesaRodada *= 1.5;
+                if(turnosEspecial == 2){
+                    JOptionPane.showMessageDialog(null, "Sua defesa sera 50% mais eficaz por 2 turnos.");
+                }
+                if(turnosEspecial == 1){
+                    JOptionPane.showMessageDialog(null, "Sua defesa sera 50% mais eficaz por 1 turno.");
+                }
+                turnosEspecial--;
+            }
         int dano = ataqueRodada - defesaRodada;
         if (dano > 0) { // se o dano for maior que 0, o defensor toma dano
             defensor.setVidaAtual(defensor.getVidaAtual() - dano);
-            System.out.println(atacante.getNome() + " ataca " + defensor.getNome() + " e causa " + dano + " de dano.");
+            JOptionPane.showMessageDialog(null, atacante.getNome() + " ataca " + defensor.getNome() + " e causa " + dano + " de dano.");
             if(defensor.getVidaAtual() <= 0){
                 defensor.setVidaAtual(0);
                 defensor.setVivo(false);
-            }else{
-                System.out.println(defensor.getNome() + " tem " + defensor.getVidaAtual() + " pontos de vida restantes.");
-            } 
+            }
         } else { // se o dano for menor que 0, o atacante toma dano
-            atacante.setVidaAtual(atacante.getVidaAtual() + dano);
-            System.out.println(atacante.getNome() + " ataca " + defensor.getNome() + ", mas " + defensor.getNome() + " repele o ataque!");
-            
-            System.out.println(atacante.getNome() + " perde " + Math.abs(dano) + " pontos de vida.");
+            atacante.setVidaAtual(atacante.getVidaAtual() + dano); // soma porque o dano é negativo
+            JOptionPane.showMessageDialog(null, atacante.getNome() + " ataca " + defensor.getNome() + ", mas " + defensor.getNome() + " repele o ataque!");           
+            JOptionPane.showMessageDialog(null, atacante.getNome() + " perde " + Math.abs(dano) + " pontos de vida.");
             if(atacante.getVidaAtual() <= 0){
                 atacante.setVidaAtual(0);
                 atacante.setVivo(false);
-            }else{
-                System.out.println(atacante.getNome() + " tem " + atacante.getVidaAtual() + " pontos de vida restantes.");
             }
         }
+        atualizarStatus();
+        verificarFimBatalha();
     }
 }
