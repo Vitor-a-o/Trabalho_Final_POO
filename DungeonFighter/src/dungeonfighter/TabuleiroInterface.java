@@ -20,7 +20,7 @@ import javax.swing.border.EmptyBorder;
 public class TabuleiroInterface extends JFrame {
     private Heroi heroi;
     private JButton[][] botoes;
-    private Tabuleiro implementacaoTabuleiro; 
+    private TabuleiroMatriz implementacaoTabuleiro; 
     private int xHeroi, yHeroi;
     private boolean debug;
     
@@ -44,7 +44,7 @@ public class TabuleiroInterface extends JFrame {
         this.debug = debug;
         
         // objeto do tipo tabuleiro para gerar os eventos
-        implementacaoTabuleiro = new Tabuleiro(nArmadilhas, nMonstros, nElixir);
+        implementacaoTabuleiro = new TabuleiroMatriz(nArmadilhas, nMonstros, nElixir);
         implementacaoTabuleiro.preencheTabuleiro();
 
         // botoes é a matriz de botões do tabuleiro
@@ -323,10 +323,9 @@ public class TabuleiroInterface extends JFrame {
                     yHeroi = coluna;
 
                     atualizarInterface();
-
                     Monstro monstro = new Chefao();
                     Batalha batalha = new Batalha(heroi, monstro);
-
+                    
                     SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
                         @Override
                         protected Void doInBackground() throws Exception {

@@ -25,6 +25,8 @@ import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
+import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
@@ -137,7 +139,69 @@ public class DungeonFighter extends JFrame implements ActionListener{
         return menu[0];
     }
     
-    public static Heroi escolheHeroi(){
+    public static String nomeHeroi (){
+        JFrame frameNome = new JFrame("Nome do Herói");
+        JTextField nomeField;
+        final String[] nome = {null}; // final para ser usada no actionlistener
+        frameNome.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frameNome.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        
+        JPanel panel = new JPanel();
+        panel.setLayout(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 10, 10, 10);
+
+        // texto
+        JLabel label = new JLabel("Digite o nome do seu herói:");
+        label.setFont(new Font("Arial", Font.BOLD, 24));
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        panel.add(label, gbc);
+
+        // pega o nome do heroi
+        nomeField = new JTextField(20);
+        nomeField.setFont(new Font("Arial", Font.PLAIN, 24));
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        panel.add(nomeField, gbc);
+
+        // botão proximo
+        JButton proximoButton = new JButton("Próximo");
+        proximoButton.setFont(new Font("Arial", Font.PLAIN, 24));
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        panel.add(proximoButton, gbc);
+
+        proximoButton.addActionListener(new ActionListener() {
+        
+        @Override
+        public void actionPerformed(ActionEvent e) {
+               try {
+                    nome[0] = nomeField.getText();
+                    if (nome[0] == null || nome[0].trim().isEmpty()) {
+                        throw new Exception("Erro: Você precisa digitar um nome");
+                    }
+                    frameNome.dispose();
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(frameNome, ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+
+        frameNome.add(panel);
+        frameNome.setVisible(true); 
+
+        while (frameNome.isDisplayable()) {
+            try {
+                Thread.sleep(100); 
+            } catch (InterruptedException ex) {
+                ex.printStackTrace();
+            }
+        }
+        return nome[0]; 
+    }
+    
+    public static Heroi escolheHeroi(String nome){
         JFrame frame = new JFrame("Escolha seu heroi");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setExtendedState(MAXIMIZED_BOTH);
@@ -162,7 +226,7 @@ public class DungeonFighter extends JFrame implements ActionListener{
 
         JPanel painelNorte = new JPanel(new BorderLayout());
         painelNorte.setBorder(BorderFactory.createEmptyBorder(50, 20, 20, 20)); // margens: cima, esquerda, baixo, direita
-        JLabel texto = new JLabel("Escolha sua classe: ", SwingConstants.CENTER);
+        JLabel texto = new JLabel("Escolha a classe de " + nome + ":", SwingConstants.CENTER);
         texto.setFont(new Font("Arial", Font.BOLD, 40));
         painelNorte.add(texto, BorderLayout.CENTER);
         frame.add(painelNorte, BorderLayout.NORTH);
@@ -210,21 +274,21 @@ public class DungeonFighter extends JFrame implements ActionListener{
 
         barbaro.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e){
-                heroi[0] = new Barbaro();
+                heroi[0] = new Barbaro(nome);
                 frame.dispose();
             }
         });
 
         guerreiro.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e){
-                heroi[0] = new Guerreiro();
+                heroi[0] = new Guerreiro(nome);
                 frame.dispose();
             }
         });
 
         paladino.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e){
-                heroi[0] = new Paladino();
+                heroi[0] = new Paladino(nome);
                 frame.dispose();
             }
         });
@@ -423,7 +487,8 @@ public class DungeonFighter extends JFrame implements ActionListener{
     public static void main(String[] args) {
         int menu = jogo();
         if(menu == 1){
-            Heroi heroi = escolheHeroi();
+            String nome = nomeHeroi();
+            Heroi heroi = escolheHeroi(nome);
             distribuiPontos(heroi, new Runnable(){
             @Override
             public void run() {
@@ -432,7 +497,8 @@ public class DungeonFighter extends JFrame implements ActionListener{
             }
         });
         }else{
-            Heroi heroi = escolheHeroi();
+            String nome = nomeHeroi();
+            Heroi heroi = escolheHeroi(nome);
             distribuiPontos(heroi, new Runnable(){
             @Override
             public void run() {

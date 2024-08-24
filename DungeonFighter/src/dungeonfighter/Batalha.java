@@ -5,7 +5,6 @@
 package dungeonfighter;
 
 import java.awt.BorderLayout;
-import java.util.concurrent.CountDownLatch;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -17,7 +16,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Random;
 import java.lang.Math;
-import java.util.Scanner;
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -27,7 +25,6 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
 public class Batalha extends JFrame {
@@ -120,7 +117,7 @@ public class Batalha extends JFrame {
         
         painelEsquerdo.add(painelHeroi);
         
-        JLabel labelTituloHeroi = new JLabel("Herói");
+        JLabel labelTituloHeroi = new JLabel(heroi.getNome());
         labelTituloHeroi.setFont(new Font("Arial", Font.BOLD, 20));
         labelTituloHeroi.setHorizontalAlignment(JLabel.CENTER);
         painelEsquerdo.add(labelTituloHeroi);
@@ -128,11 +125,20 @@ public class Batalha extends JFrame {
         add(painelEsquerdo, BorderLayout.WEST);
         
         BufferedImage imagemMonstro = null;
-        try {
-            imagemMonstro = ImageIO.read(new File("src/monstro.png"));
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.exit(1);
+        if(monstro instanceof Chefao){
+            try {
+                imagemMonstro = ImageIO.read(new File("src/monstro.png")); // TROCAR O CAMINHO PARA A IMAGEM DO CHEFÃO
+            } catch (IOException e) {
+                e.printStackTrace();
+                System.exit(1);
+            }
+        }else{
+            try {
+                imagemMonstro = ImageIO.read(new File("src/monstro.png"));
+            } catch (IOException e) {
+                e.printStackTrace();
+                System.exit(1);
+            }
         }
         
         JPanel painelMonstro = new JPanel();
@@ -145,7 +151,13 @@ public class Batalha extends JFrame {
         
         painelDireito.add(painelMonstro); 
         
-        JLabel labelTituloMonstro = new JLabel("Monstro");
+        JLabel labelTituloMonstro;
+        if(monstro instanceof Chefao){
+            labelTituloMonstro = new JLabel("Chefao");
+        }else{
+            labelTituloMonstro = new JLabel("Monstro");
+        }
+        
         labelTituloMonstro.setFont(new Font("Arial", Font.BOLD, 20));
         labelTituloMonstro.setHorizontalAlignment(JLabel.CENTER);
         painelDireito.add(labelTituloMonstro);
@@ -201,6 +213,7 @@ public class Batalha extends JFrame {
                         JOptionPane.showMessageDialog(null, "Habilidade Especial: Golpe Furioso \nSeu próximo ataque causará 50% mais dano.");
                     }
                     if(heroi instanceof Guerreiro){
+                        JOptionPane.showMessageDialog(null, "Habilidade Especial: Postura Defensiva \nSua defesa aumentará 50% por duas rodadas.");
                         turnosEspecial = 2;
                     }
                     if(heroi instanceof Paladino){
@@ -213,7 +226,6 @@ public class Batalha extends JFrame {
                         vida.setText("Vida: " + heroi.getVidaAtual());
                     }
                     usouEspecial = true;
-                    turno(heroi, monstro);
                     if (monstro.getVivo()) {
                         JOptionPane.showMessageDialog(null, "É a vez do inimigo de atacar.");
                         turno(monstro, heroi);

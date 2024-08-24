@@ -17,11 +17,10 @@ public abstract class Personagem {
     private String nome;
     private boolean vivo;
     
-    public Personagem(int ataque, int defesa, int saude, String nome){
+    public Personagem(int ataque, int defesa, int saude){
         this.ataque = ataque;
         this.defesa = defesa;
         this.saude = saude;
-        this.nome = nome;
         this.vidaTotal = saude + 10; // os pontos de vida são Y+Saude
         this.vidaAtual = vidaTotal;
         this.vivo = true;

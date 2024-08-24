@@ -1,11 +1,9 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 package dungeonfighter;
 
 public class Barbaro extends Heroi{
-    public Barbaro(){
-        super(10, 5, 8, "Barbaro");
+    public Barbaro(String nome){
+        super(10, 5, 8);
+        super.setNome(nome);
     }
 }

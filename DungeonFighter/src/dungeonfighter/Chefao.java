@@ -13,7 +13,8 @@ public class Chefao extends Monstro {
     // os atributos do chefao precisam ser maiores que o do monstro normal!!!
     
     public Chefao(){
-        super(6, 8, 30, "Boss");
+        super(6, 8, 30);
+        super.setNome("Chefão");
     }
     
 }

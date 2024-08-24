@@ -13,8 +13,8 @@ public abstract class Heroi extends Personagem {
     private int quantidadeMaxElixir;
     private int dicas; // para evitar as armadilhas
     
-    public Heroi(int ataque, int defesa, int saude, String nome){
-        super(ataque, defesa, saude, nome);
+    public Heroi(int ataque, int defesa, int saude){
+        super(ataque, defesa, saude);
         this.quantidadeElixir = 0;
         this.dicas = 3;
         this.quantidadeMaxElixir = 3;
