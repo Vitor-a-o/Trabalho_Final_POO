@@ -23,6 +23,7 @@ public class TabuleiroInterface extends JFrame {
     private TabuleiroMatriz implementacaoTabuleiro; 
     private int xHeroi, yHeroi;
     private boolean debug;
+    private CountDownLatch latch;
     
     // textos informativos dos atributos do herói:
     private JLabel textoAtaque;
@@ -31,13 +32,14 @@ public class TabuleiroInterface extends JFrame {
     private JLabel textoElixir;
     private JLabel textoDicas;
 
-    public TabuleiroInterface(int nArmadilhas, int nMonstros, int nElixir, Heroi heroi, boolean debug) {
+    public TabuleiroInterface(int nArmadilhas, int nMonstros, int nElixir, Heroi heroi, boolean debug, CountDownLatch latch) {
         
         setTitle("Tabuleiro do Jogo");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         setLayout(new BorderLayout());
         setExtendedState(MAXIMIZED_BOTH);
+        this.latch = latch;
         this.heroi = heroi;
         this.xHeroi = 0;
         this.yHeroi = 4;
@@ -239,6 +241,7 @@ public class TabuleiroInterface extends JFrame {
                     af.modificaVida(heroi);
                     if(heroi.getVivo() == false){
                         JOptionPane.showMessageDialog(null, "Você perdeu!");
+                        latch.countDown();
                         dispose();
                     }
                     atualizarStatus();
@@ -256,6 +259,7 @@ public class TabuleiroInterface extends JFrame {
                     af.modificaVida(heroi);
                     if(heroi.getVivo() == false){
                         JOptionPane.showMessageDialog(null, "Você perdeu!");
+                        latch.countDown();
                         dispose();
                     }
                     atualizarStatus();
@@ -289,6 +293,7 @@ public class TabuleiroInterface extends JFrame {
                         protected void done() {
                             if(heroi.getVivo() == false){
                                 JOptionPane.showMessageDialog(null, "Você perdeu!");
+                                latch.countDown();
                                 dispose();
                             }else{
                                 int atributo =  (int)(Math.random() * 3);
@@ -343,9 +348,11 @@ public class TabuleiroInterface extends JFrame {
                         protected void done() {
                             if(heroi.getVivo() == false){
                                 JOptionPane.showMessageDialog(null, "Você perdeu o jogo! :(");
+                                latch.countDown();
                                 dispose();
                             }else{
                                 JOptionPane.showMessageDialog(null, "Você venceu o jogo! :D");
+                                latch.countDown();
                                 dispose();
                             }
                         }

@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Random;
+import java.util.concurrent.CountDownLatch;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
@@ -28,6 +29,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.swing.SwingWorker;
 import javax.swing.border.EmptyBorder;
 
 public class DungeonFighter extends JFrame implements ActionListener{
@@ -49,7 +51,7 @@ public class DungeonFighter extends JFrame implements ActionListener{
         // carrega a imagem
         BufferedImage imagemOriginal = null;
         try {
-            imagemOriginal = ImageIO.read(new File("src/Logo.png"));
+            imagemOriginal = ImageIO.read(new File("DungeonFighter/src/Logo.png"));
         } catch (IOException e) {
             e.printStackTrace();
             System.exit(1);
@@ -304,7 +306,7 @@ public class DungeonFighter extends JFrame implements ActionListener{
 
     }
     
-    public static void distribuiPontos(Heroi heroi, Runnable onClose){
+    public static void distribuiPontos(Heroi heroi){
         final int[] pontosRestantes;
         pontosRestantes = new int[1];
         pontosRestantes[0] = 5;
@@ -467,7 +469,6 @@ public class DungeonFighter extends JFrame implements ActionListener{
                 if(pontosRestantes[0] == 0){
                     mensagemConfirmacao.setVisible(false);
                     frame.dispose();
-                    onClose.run();
                     confirmacao[0] = true;
                 }else{
                     mensagemConfirmacao.setVisible(true);
@@ -485,27 +486,39 @@ public class DungeonFighter extends JFrame implements ActionListener{
     }
 
     public static void main(String[] args) {
-        int menu = jogo();
-        if(menu == 1){
-            String nome = nomeHeroi();
-            Heroi heroi = escolheHeroi(nome);
-            distribuiPontos(heroi, new Runnable(){
-            @Override
-            public void run() {
-                TabuleiroInterface tabuleiroInterface = new TabuleiroInterface(5, 3, 4, heroi,false); // Exemplo com 5 armadilhas, 3 monstros, 2 elixires
-                tabuleiroInterface.setVisible(true);
+        while(true){
+            final int[] menu = new int[1];
+            final Heroi[] heroi = new Heroi[1];
+            CountDownLatch latch = new CountDownLatch(1);
+            SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>(){
+                protected Void doInBackground() throws Exception {
+                    try{
+                        menu[0] = jogo();
+                        String nome = nomeHeroi();
+                        heroi[0] = escolheHeroi(nome);
+                        distribuiPontos(heroi[0]);
+                    }catch(Exception e){
+                        e.printStackTrace();
+                    }
+                    return null;
+                }
+                protected void done(){
+                    try{
+                        boolean debug = menu[0] != 1;
+                        TabuleiroInterface tabuleiroInterface = new TabuleiroInterface(5, 3, 4, heroi[0], debug, latch); // Exemplo com 5 armadilhas, 3 monstros, 2 elixires
+                        tabuleiroInterface.setVisible(true);
+                    }catch(Exception e){
+                        e.printStackTrace();
+                    }
+                }
+            };
+
+            worker.execute();
+            try{
+                latch.await();
+            }catch(Exception e){
+                e.printStackTrace();
             }
-        });
-        }else{
-            String nome = nomeHeroi();
-            Heroi heroi = escolheHeroi(nome);
-            distribuiPontos(heroi, new Runnable(){
-            @Override
-            public void run() {
-                TabuleiroInterface tabuleiroInterface = new TabuleiroInterface(5, 3, 4, heroi,true); // Exemplo com 5 armadilhas, 3 monstros, 2 elixires
-                tabuleiroInterface.setVisible(true);
-            }
-        });
         }
     }
 }
