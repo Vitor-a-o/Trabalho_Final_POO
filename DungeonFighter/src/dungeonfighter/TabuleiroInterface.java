@@ -16,9 +16,10 @@ import java.util.Random;
 import java.util.concurrent.CountDownLatch;
 
 import javax.swing.border.EmptyBorder;
+import javax.tools.Tool;
 
 public class TabuleiroInterface extends JFrame {
-    private Heroi heroi;
+    private Heroi heroiT;
     private JButton[][] botoes;
     private TabuleiroMatriz implementacaoTabuleiro; 
     private int xHeroi, yHeroi;
@@ -38,9 +39,10 @@ public class TabuleiroInterface extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         setLayout(new BorderLayout());
-        setExtendedState(MAXIMIZED_BOTH);
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        setSize(screenSize.width, screenSize.height);
         this.latch = latch;
-        this.heroi = heroi;
+        this.heroiT = heroi;
         this.xHeroi = 0;
         this.yHeroi = 4;
         this.debug = debug;
@@ -48,9 +50,58 @@ public class TabuleiroInterface extends JFrame {
         // objeto do tipo tabuleiro para gerar os eventos
         implementacaoTabuleiro = new TabuleiroMatriz(nArmadilhas, nMonstros, nElixir);
         implementacaoTabuleiro.preencheTabuleiro();
+        TabuleiroMatriz tabuleiro = implementacaoTabuleiro;
 
         // botoes é a matriz de botões do tabuleiro
         botoes = new JButton[implementacaoTabuleiro.getTabuleiro().length][implementacaoTabuleiro.getTabuleiro()[0].length];
+
+        //frame de opções
+        JFrame frameOpcoes = new JFrame();
+        frameOpcoes.setTitle("Opções");
+        frameOpcoes.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frameOpcoes.setLayout(null);
+        frameOpcoes.setSize(400, 400);
+
+        // botão de reiniciar
+        JButton botaoReiniciar = new JButton("Reiniciar");
+        botaoReiniciar.setBounds(150, 50, 100, 50);
+        botaoReiniciar.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                implementacaoTabuleiro = tabuleiro;
+                xHeroi = 0;
+                yHeroi = 4;
+                heroiT = heroi;
+                frameOpcoes.setVisible(false);
+            }
+        });
+
+        // botão de sair
+        JButton botaoSair = new JButton("Sair");
+        botaoSair.setBounds(150, 150, 100, 50);
+        botaoSair.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                latch.countDown();
+                frameOpcoes.setVisible(false);
+                dispose();
+            }
+        });
+
+        frameOpcoes.add(botaoReiniciar);
+        frameOpcoes.add(botaoSair);
+        frameOpcoes.setVisible(false);
+
+        // botão de opções
+        JButton botaoOpcoes = new JButton("|||");
+        botaoOpcoes.setBounds(screenSize.width - 50, 0, 50, 50);
+        botaoOpcoes.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                frameOpcoes.setVisible(true);
+            }
+        });
+        add(botaoOpcoes);
 
         JPanel painelTabuleiro = new JPanel();
         painelTabuleiro.setLayout(new GridLayout(5, 10));
@@ -200,11 +251,11 @@ public class TabuleiroInterface extends JFrame {
     }
     
     private void atualizarStatus() {
-        textoAtaque.setText("Ataque: " + heroi.getAtaque());
-        textoDefesa.setText("Defesa: " + heroi.getDefesa());
-        textoVida.setText("Vida: " + heroi.getVidaAtual());
-        textoElixir.setText("Quantidade de Elixir: " + heroi.getQuantidadeElixir());
-        textoDicas.setText("Dicas restantes: " + heroi.getDicas());
+        textoAtaque.setText("Ataque: " + heroiT.getAtaque());
+        textoDefesa.setText("Defesa: " + heroiT.getDefesa());
+        textoVida.setText("Vida: " + heroiT.getVidaAtual());
+        textoElixir.setText("Quantidade de Elixir: " + heroiT.getQuantidadeElixir());
+        textoDicas.setText("Dicas restantes: " + heroiT.getDicas());
     }
 
     private class BotaoActionListener implements ActionListener {
@@ -238,8 +289,8 @@ public class TabuleiroInterface extends JFrame {
                     atualizarInterface();
                  
                     Armadilha af = new Armadilha(3);
-                    af.modificaVida(heroi);
-                    if(heroi.getVivo() == false){
+                    af.modificaVida(heroiT);
+                    if(heroiT.getVivo() == false){
                         JOptionPane.showMessageDialog(null, "Você perdeu!");
                         latch.countDown();
                         dispose();
@@ -256,8 +307,8 @@ public class TabuleiroInterface extends JFrame {
                     atualizarInterface();
 
                     Armadilha af = new Armadilha((int)((Math.random() * 5) + 1));
-                    af.modificaVida(heroi);
-                    if(heroi.getVivo() == false){
+                    af.modificaVida(heroiT);
+                    if(heroiT.getVivo() == false){
                         JOptionPane.showMessageDialog(null, "Você perdeu!");
                         latch.countDown();
                         dispose();
@@ -274,7 +325,7 @@ public class TabuleiroInterface extends JFrame {
                     atualizarInterface();
 
                     Monstro monstro = new MonstroNormal();
-                    Batalha batalha = new Batalha(heroi, monstro);
+                    Batalha batalha = new Batalha(heroiT, monstro);
 
                     SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
                         @Override
@@ -291,7 +342,7 @@ public class TabuleiroInterface extends JFrame {
                         }
 
                         protected void done() {
-                            if(heroi.getVivo() == false){
+                            if(heroiT.getVivo() == false){
                                 JOptionPane.showMessageDialog(null, "Você perdeu!");
                                 latch.countDown();
                                 dispose();
@@ -299,16 +350,16 @@ public class TabuleiroInterface extends JFrame {
                                 int atributo =  (int)(Math.random() * 3);
                                 int valor = (int)(Math.random() * 3) + 2;
                                 if(atributo == 0){
-                                    heroi.setAtaque(heroi.getAtaque()+valor);
+                                    heroiT.setAtaque(heroiT.getAtaque()+valor);
                                     JOptionPane.showMessageDialog(null, "Você venceu a batalha! Seu ataque aumentou " + valor + " pontos.");
                                 }
                                 if(atributo == 1){
-                                    heroi.setDefesa(heroi.getDefesa()+valor);
+                                    heroiT.setDefesa(heroiT.getDefesa()+valor);
                                     JOptionPane.showMessageDialog(null, "Você venceu a batalha! Seu defesa aumentou " + valor + " pontos.");
                                 }
                                 if(atributo == 2){
-                                    heroi.setVidaTotal(heroi.getVidaTotal()+valor);
-                                    heroi.setVidaAtual(heroi.getVidaAtual()+valor);
+                                    heroiT.setVidaTotal(heroiT.getVidaTotal()+valor);
+                                    heroiT.setVidaAtual(heroiT.getVidaAtual()+valor);
                                     JOptionPane.showMessageDialog(null, "Você venceu a batalha! Sua vida aumentou " + valor + " pontos.");
                                 }
                             }
@@ -329,7 +380,7 @@ public class TabuleiroInterface extends JFrame {
 
                     atualizarInterface();
                     Monstro monstro = new Chefao();
-                    Batalha batalha = new Batalha(heroi, monstro);
+                    Batalha batalha = new Batalha(heroiT, monstro);
                     
                     SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
                         @Override
@@ -346,7 +397,7 @@ public class TabuleiroInterface extends JFrame {
                         }
 
                         protected void done() {
-                            if(heroi.getVivo() == false){
+                            if(heroiT.getVivo() == false){
                                 JOptionPane.showMessageDialog(null, "Você perdeu o jogo! :(");
                                 latch.countDown();
                                 dispose();
@@ -369,11 +420,11 @@ public class TabuleiroInterface extends JFrame {
 
                     atualizarInterface();
                         
-                    if(heroi.getQuantidadeMaxElixir() == heroi.getQuantidadeElixir()){
+                    if(heroiT.getQuantidadeMaxElixir() == heroiT.getQuantidadeElixir()){
                         JOptionPane.showMessageDialog(null, "Você encontrou um elixir, mas você não tem espaço para carregar outro elixir.");
                     }else{
-                        heroi.incrementaElixir();
-                        JOptionPane.showMessageDialog(null, "Você encontrou um elixir! Agora, você tem " + heroi.getQuantidadeElixir() + " elixir.");
+                        heroiT.incrementaElixir();
+                        JOptionPane.showMessageDialog(null, "Você encontrou um elixir! Agora, você tem " + heroiT.getQuantidadeElixir() + " elixir.");
                     }
                     atualizarStatus();
                 }
