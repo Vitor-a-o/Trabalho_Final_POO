@@ -101,7 +101,7 @@ public class Batalha extends JFrame {
         BufferedImage imagemHeroi = null;
 
         try {   
-            imagemHeroi = ImageIO.read(new File("DungeonFighter/src/heroi.jpg"));
+            imagemHeroi = ImageIO.read(new File(System.getProperty("user.dir") + "/DungeonFighter/src/heroi.jpg"));
         } catch (IOException e) {
             e.printStackTrace();
             System.exit(1);
@@ -127,14 +127,14 @@ public class Batalha extends JFrame {
         BufferedImage imagemMonstro = null;
         if(monstro instanceof Chefao){
             try {
-                imagemMonstro = ImageIO.read(new File("DungeonFighter/src/monstro.png")); // TROCAR O CAMINHO PARA A IMAGEM DO CHEFÃO
+                imagemMonstro = ImageIO.read(new File(System.getProperty("user.dir") + "/DungeonFighter/src/monstro.png")); // TROCAR O CAMINHO PARA A IMAGEM DO CHEFÃO
             } catch (IOException e) {
                 e.printStackTrace();
                 System.exit(1);
             }
         }else{
             try {
-                imagemMonstro = ImageIO.read(new File("DungeonFighter/src/monstro.png"));
+                imagemMonstro = ImageIO.read(new File(System.getProperty("user.dir") + "/DungeonFighter/src/monstro.png"));
             } catch (IOException e) {
                 e.printStackTrace();
                 System.exit(1);

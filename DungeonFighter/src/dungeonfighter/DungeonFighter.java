@@ -50,8 +50,9 @@ public class DungeonFighter extends JFrame implements ActionListener{
         
         // carrega a imagem
         BufferedImage imagemOriginal = null;
+        System.out.println(System.getProperty("user.dir"));
         try {
-            imagemOriginal = ImageIO.read(new File("DungeonFighter/src/Logo.png"));
+            imagemOriginal = ImageIO.read(new File(System.getProperty("user.dir") + "/DungeonFighter/src/Logo.png"));
         } catch (IOException e) {
             e.printStackTrace();
             System.exit(1);
