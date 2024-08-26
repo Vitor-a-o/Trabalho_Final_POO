@@ -19,9 +19,9 @@ import javax.swing.border.EmptyBorder;
 import javax.tools.Tool;
 
 public class TabuleiroInterface extends JFrame {
-    private Heroi heroiT;
     private JButton[][] botoes;
     private TabuleiroMatriz implementacaoTabuleiro; 
+    private Heroi heroithis;
     private int xHeroi, yHeroi;
     private boolean debug;
     private CountDownLatch latch;
@@ -42,7 +42,7 @@ public class TabuleiroInterface extends JFrame {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         setSize(screenSize.width, screenSize.height);
         this.latch = latch;
-        this.heroiT = heroi;
+        this.heroithis = heroi;
         this.xHeroi = 0;
         this.yHeroi = 4;
         this.debug = debug;
@@ -50,7 +50,10 @@ public class TabuleiroInterface extends JFrame {
         // objeto do tipo tabuleiro para gerar os eventos
         implementacaoTabuleiro = new TabuleiroMatriz(nArmadilhas, nMonstros, nElixir);
         implementacaoTabuleiro.preencheTabuleiro();
-        TabuleiroMatriz tabuleiro = implementacaoTabuleiro;
+
+        //fazer copia do tabuleiro
+        TabuleiroMatriz tabuleiro = new TabuleiroMatriz(nArmadilhas, nMonstros, nElixir);
+        tabuleiro.setTabuleiro(implementacaoTabuleiro.getTabuleiro());
 
         // botoes é a matriz de botões do tabuleiro
         botoes = new JButton[implementacaoTabuleiro.getTabuleiro().length][implementacaoTabuleiro.getTabuleiro()[0].length];
@@ -68,10 +71,22 @@ public class TabuleiroInterface extends JFrame {
         botaoReiniciar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                implementacaoTabuleiro = tabuleiro;
+                Heroi copiaHeroi = null;
+
+                if(heroithis instanceof Barbaro){
+                    copiaHeroi = new Barbaro(heroithis.getNome());
+                }if(heroithis instanceof Guerreiro){
+                    copiaHeroi = new Guerreiro(heroithis.getNome());
+                }else{
+                    copiaHeroi = new Paladino(heroithis.getNome());
+                }
+
+                implementacaoTabuleiro.setTabuleiro(tabuleiro.getTabuleiro());
                 xHeroi = 0;
                 yHeroi = 4;
-                heroiT = heroi;
+                heroithis = copiaHeroi;
+                atualizarInterface();
+                atualizarStatus();
                 frameOpcoes.setVisible(false);
             }
         });
@@ -126,9 +141,9 @@ public class TabuleiroInterface extends JFrame {
         
         // borda superior:
         JLabel textoSuperior;
-        if(heroi instanceof Barbaro){
+        if(heroithis instanceof Barbaro){
             textoSuperior = new JLabel("Classe: Bárbaro", SwingConstants.CENTER);
-        }if(heroi instanceof Guerreiro){
+        }if(heroithis instanceof Guerreiro){
             textoSuperior = new JLabel("Classe: Guerreiro", SwingConstants.CENTER);
         }else{
             textoSuperior = new JLabel("Classe: Paladino", SwingConstants.CENTER);
@@ -141,11 +156,11 @@ public class TabuleiroInterface extends JFrame {
         painelInferior.setLayout(new FlowLayout(FlowLayout.CENTER, 20, 10));
 
         Font fonte = new Font("Arial", Font.BOLD, 18);
-        textoAtaque = new JLabel("Ataque: " + heroi.getAtaque(), SwingConstants.CENTER);
-        textoDefesa = new JLabel("Defesa: " + heroi.getDefesa(), SwingConstants.CENTER);
-        textoVida = new JLabel("Vida: " + heroi.getVidaAtual(), SwingConstants.CENTER);
-        textoElixir = new JLabel("Quantidade de Elixir: " + heroi.getQuantidadeElixir(), SwingConstants.CENTER);
-        textoDicas = new JLabel("Dicas restantes: " + heroi.getDicas(), SwingConstants.CENTER);
+        textoAtaque = new JLabel("Ataque: " + heroithis.getAtaque(), SwingConstants.CENTER);
+        textoDefesa = new JLabel("Defesa: " + heroithis.getDefesa(), SwingConstants.CENTER);
+        textoVida = new JLabel("Vida: " + heroithis.getVidaAtual(), SwingConstants.CENTER);
+        textoElixir = new JLabel("Quantidade de Elixir: " + heroithis.getQuantidadeElixir(), SwingConstants.CENTER);
+        textoDicas = new JLabel("Dicas restantes: " + heroithis.getDicas(), SwingConstants.CENTER);
         
         textoAtaque.setFont(fonte);
         textoDefesa.setFont(fonte);
@@ -171,7 +186,7 @@ public class TabuleiroInterface extends JFrame {
         botaoDica.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if(heroi.getDicas()>0){
+                if(heroithis.getDicas()>0){
                     int linhaOuColuna = (int) (Math.random() * 2);// se linhaOuColuna = 0, vai informar sobre a linha, se for 1, sobre a coluna
                     // se linhaOuColuna = 0, vai informar sobre a linha, se for 1, sobre a coluna
                     if(linhaOuColuna == 0){
@@ -201,7 +216,7 @@ public class TabuleiroInterface extends JFrame {
                             JOptionPane.showMessageDialog(null, "Na coluna " + coluna + ", nao tem nenhuma armadilha.");
                         }
                     }
-                    heroi.usaDica();
+                    heroithis.usaDica();
                     atualizarStatus();
                 }else{
                     JOptionPane.showMessageDialog(null, "Você não tem mais dicas para usar.");
@@ -251,11 +266,11 @@ public class TabuleiroInterface extends JFrame {
     }
     
     private void atualizarStatus() {
-        textoAtaque.setText("Ataque: " + heroiT.getAtaque());
-        textoDefesa.setText("Defesa: " + heroiT.getDefesa());
-        textoVida.setText("Vida: " + heroiT.getVidaAtual());
-        textoElixir.setText("Quantidade de Elixir: " + heroiT.getQuantidadeElixir());
-        textoDicas.setText("Dicas restantes: " + heroiT.getDicas());
+        textoAtaque.setText("Ataque: " + heroithis.getAtaque());
+        textoDefesa.setText("Defesa: " + heroithis.getDefesa());
+        textoVida.setText("Vida: " + heroithis.getVidaAtual());
+        textoElixir.setText("Quantidade de Elixir: " + heroithis.getQuantidadeElixir());
+        textoDicas.setText("Dicas restantes: " + heroithis.getDicas());
     }
 
     private class BotaoActionListener implements ActionListener {
@@ -289,8 +304,8 @@ public class TabuleiroInterface extends JFrame {
                     atualizarInterface();
                  
                     Armadilha af = new Armadilha(3);
-                    af.modificaVida(heroiT);
-                    if(heroiT.getVivo() == false){
+                    af.modificaVida(heroithis);
+                    if(heroithis.getVivo() == false){
                         JOptionPane.showMessageDialog(null, "Você perdeu!");
                         latch.countDown();
                         dispose();
@@ -307,8 +322,8 @@ public class TabuleiroInterface extends JFrame {
                     atualizarInterface();
 
                     Armadilha af = new Armadilha((int)((Math.random() * 5) + 1));
-                    af.modificaVida(heroiT);
-                    if(heroiT.getVivo() == false){
+                    af.modificaVida(heroithis);
+                    if(heroithis.getVivo() == false){
                         JOptionPane.showMessageDialog(null, "Você perdeu!");
                         latch.countDown();
                         dispose();
@@ -325,7 +340,7 @@ public class TabuleiroInterface extends JFrame {
                     atualizarInterface();
 
                     Monstro monstro = new MonstroNormal();
-                    Batalha batalha = new Batalha(heroiT, monstro);
+                    Batalha batalha = new Batalha(heroithis, monstro);
 
                     SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
                         @Override
@@ -342,7 +357,7 @@ public class TabuleiroInterface extends JFrame {
                         }
 
                         protected void done() {
-                            if(heroiT.getVivo() == false){
+                            if(heroithis.getVivo() == false){
                                 JOptionPane.showMessageDialog(null, "Você perdeu!");
                                 latch.countDown();
                                 dispose();
@@ -350,16 +365,16 @@ public class TabuleiroInterface extends JFrame {
                                 int atributo =  (int)(Math.random() * 3);
                                 int valor = (int)(Math.random() * 3) + 2;
                                 if(atributo == 0){
-                                    heroiT.setAtaque(heroiT.getAtaque()+valor);
+                                    heroithis.setAtaque(heroithis.getAtaque()+valor);
                                     JOptionPane.showMessageDialog(null, "Você venceu a batalha! Seu ataque aumentou " + valor + " pontos.");
                                 }
                                 if(atributo == 1){
-                                    heroiT.setDefesa(heroiT.getDefesa()+valor);
+                                    heroithis.setDefesa(heroithis.getDefesa()+valor);
                                     JOptionPane.showMessageDialog(null, "Você venceu a batalha! Seu defesa aumentou " + valor + " pontos.");
                                 }
                                 if(atributo == 2){
-                                    heroiT.setVidaTotal(heroiT.getVidaTotal()+valor);
-                                    heroiT.setVidaAtual(heroiT.getVidaAtual()+valor);
+                                    heroithis.setVidaTotal(heroithis.getVidaTotal()+valor);
+                                    heroithis.setVidaAtual(heroithis.getVidaAtual()+valor);
                                     JOptionPane.showMessageDialog(null, "Você venceu a batalha! Sua vida aumentou " + valor + " pontos.");
                                 }
                             }
@@ -380,7 +395,7 @@ public class TabuleiroInterface extends JFrame {
 
                     atualizarInterface();
                     Monstro monstro = new Chefao();
-                    Batalha batalha = new Batalha(heroiT, monstro);
+                    Batalha batalha = new Batalha(heroithis, monstro);
                     
                     SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
                         @Override
@@ -397,7 +412,7 @@ public class TabuleiroInterface extends JFrame {
                         }
 
                         protected void done() {
-                            if(heroiT.getVivo() == false){
+                            if(heroithis.getVivo() == false){
                                 JOptionPane.showMessageDialog(null, "Você perdeu o jogo! :(");
                                 latch.countDown();
                                 dispose();
@@ -420,11 +435,11 @@ public class TabuleiroInterface extends JFrame {
 
                     atualizarInterface();
                         
-                    if(heroiT.getQuantidadeMaxElixir() == heroiT.getQuantidadeElixir()){
+                    if(heroithis.getQuantidadeMaxElixir() == heroithis.getQuantidadeElixir()){
                         JOptionPane.showMessageDialog(null, "Você encontrou um elixir, mas você não tem espaço para carregar outro elixir.");
                     }else{
-                        heroiT.incrementaElixir();
-                        JOptionPane.showMessageDialog(null, "Você encontrou um elixir! Agora, você tem " + heroiT.getQuantidadeElixir() + " elixir.");
+                        heroithis.incrementaElixir();
+                        JOptionPane.showMessageDialog(null, "Você encontrou um elixir! Agora, você tem " + heroithis.getQuantidadeElixir() + " elixir.");
                     }
                     atualizarStatus();
                 }

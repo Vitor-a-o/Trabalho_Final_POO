@@ -80,6 +80,14 @@ public class TabuleiroMatriz {
         return tabuleiro;
     }
 
+    public void setTabuleiro(int[][] tabuleiro) {
+        for (int i = 0; i < comprimento; i++) {
+            for (int j = 0; j < largura; j++) {
+                this.tabuleiro[i][j] = tabuleiro[i][j];
+            }
+        }
+    }
+
     public void printTabuleiro() {
         for (int i = 0; i < comprimento; i++) {
             for (int j = 0; j < largura; j++) {
