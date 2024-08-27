@@ -106,6 +106,8 @@ public class TabuleiroInterface extends JFrame {
                     copiaHeroi = new Mago(heroithis.getNome());
                 }
 
+                copiaHeroi.setAtributos();
+
                 implementacaoTabuleiro.setTabuleiro(tabuleiro.getTabuleiro());
                 xHeroi = 0;
                 yHeroi = 4;

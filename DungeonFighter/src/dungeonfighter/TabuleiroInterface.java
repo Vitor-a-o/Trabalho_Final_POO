@@ -18,8 +18,7 @@ public class TabuleiroInterface extends JFrame {
     private JButton[][] botoes;
     private TabuleiroMatriz implementacaoTabuleiro; 
     private Heroi heroithis;
-    private Heroi heroi;
-    private Heroi heroiInicial;
+    private Heroi copiaHeroi;
     private int xHeroi, yHeroi;
     private boolean debug;
     private CountDownLatch latch;
@@ -45,7 +44,6 @@ public class TabuleiroInterface extends JFrame {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         setSize(screenSize.width, screenSize.height);
         this.latch = latch;
-        this.heroiInicial = heroi;
         this.heroithis = heroi;
         this.xHeroi = 0;
         this.yHeroi = 4;
@@ -64,6 +62,17 @@ public class TabuleiroInterface extends JFrame {
         TabuleiroMatriz tabuleiro = new TabuleiroMatriz(nArmadilhas, nMonstros, nElixir);
         tabuleiro.setTabuleiro(implementacaoTabuleiro.getTabuleiro());
 
+        //fazer copia do heroi
+        if(heroithis instanceof Barbaro){
+            copiaHeroi = new Barbaro(heroithis.getNome());
+        }if(heroithis instanceof Guerreiro){
+            copiaHeroi = new Guerreiro(heroithis.getNome());
+        }else{
+            copiaHeroi = new Mago(heroithis.getNome());
+        }
+
+        copiaHeroi.setAtributos(heroithis.getAtaque(), heroithis.getDefesa(), heroithis.getVidaTotal());
+
         // botoes é a matriz de botões do tabuleiro
         botoes = new JButton[implementacaoTabuleiro.getTabuleiro().length][implementacaoTabuleiro.getTabuleiro()[0].length];
 
@@ -79,7 +88,8 @@ public class TabuleiroInterface extends JFrame {
         botaoReiniciar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                heroithis.setAtributos(heroiInicial.getAtaque(), heroiInicial.getDefesa(), heroiInicial.getVidaTotal());
+
+                heroithis.setAtributos(copiaHeroi.getAtaque(), copiaHeroi.getDefesa(), copiaHeroi.getVidaTotal());
                 implementacaoTabuleiro.setTabuleiro(tabuleiro.getTabuleiro());
                 xHeroi = 0;
                 yHeroi = 4;
