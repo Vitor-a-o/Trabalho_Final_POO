@@ -79,7 +79,7 @@ public class TabuleiroInterface extends JFrame {
         botaoReiniciar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                heroithis = heroiInicial;
+                heroithis.setAtributos(heroiInicial.getAtaque(), heroiInicial.getDefesa(), heroiInicial.getVidaTotal());
                 implementacaoTabuleiro.setTabuleiro(tabuleiro.getTabuleiro());
                 xHeroi = 0;
                 yHeroi = 4;

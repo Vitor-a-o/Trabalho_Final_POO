@@ -47,4 +47,10 @@ public abstract class Heroi extends Personagem {
     public Elixir[] getBolsaDeElixir() {
         return bolsaDeElixir;
     }
+
+    public void setAtributos(int ataque, int defesa, int saude){
+        super.setAtaque(ataque);
+        super.setDefesa(defesa);
+        super.setSaude(saude);
+    }
 }
