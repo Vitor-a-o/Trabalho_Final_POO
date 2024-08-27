@@ -18,7 +18,6 @@ public class TabuleiroInterface extends JFrame {
     private JButton[][] botoes;
     private TabuleiroMatriz implementacaoTabuleiro; 
     private Heroi heroithis;
-    private Heroi copiaHeroi;
     private int xHeroi, yHeroi;
     private boolean debug;
     private CountDownLatch latch;
@@ -62,16 +61,13 @@ public class TabuleiroInterface extends JFrame {
         TabuleiroMatriz tabuleiro = new TabuleiroMatriz(nArmadilhas, nMonstros, nElixir);
         tabuleiro.setTabuleiro(implementacaoTabuleiro.getTabuleiro());
 
-        //fazer copia do heroi
-        if(heroithis instanceof Barbaro){
-            copiaHeroi = new Barbaro(heroithis.getNome());
-        }if(heroithis instanceof Guerreiro){
-            copiaHeroi = new Guerreiro(heroithis.getNome());
-        }else{
-            copiaHeroi = new Mago(heroithis.getNome());
-        }
+        //salvar atributos do heroi
+        int[] atributos = {heroi.getAtaque(), heroi.getDefesa(), heroi.getVidaAtual()};
 
-        copiaHeroi.setAtributos(heroithis.getAtaque(), heroithis.getDefesa(), heroithis.getVidaTotal());
+        //imprimir atributos do heroi
+        System.out.println("Ataque: " + heroi.getAtaque());
+        System.out.println("Defesa: " + heroi.getDefesa());
+        System.out.println("Saude: " + heroi.getVidaAtual());
 
         // botoes é a matriz de botões do tabuleiro
         botoes = new JButton[implementacaoTabuleiro.getTabuleiro().length][implementacaoTabuleiro.getTabuleiro()[0].length];
@@ -89,7 +85,9 @@ public class TabuleiroInterface extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
 
-                heroithis.setAtributos(copiaHeroi.getAtaque(), copiaHeroi.getDefesa(), copiaHeroi.getVidaTotal());
+                heroithis.setAtributos(atributos[0], atributos[1], atributos[2]);
+                heroithis.setDicas(3);
+                heroithis.setQuantidadeElixir(0);
                 implementacaoTabuleiro.setTabuleiro(tabuleiro.getTabuleiro());
                 xHeroi = 0;
                 yHeroi = 4;

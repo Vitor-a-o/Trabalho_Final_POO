@@ -21,6 +21,14 @@ public abstract class Heroi extends Personagem {
     public int getDicas(){
         return dicas;
     }
+
+    public void setDicas(int dicas){
+        this.dicas = dicas;
+    }
+
+    public void setQuantidadeElixir(int quantidadeElixir){
+        this.quantidadeElixir = quantidadeElixir;
+    }
     
     public void usaDica(){
         dicas--;
@@ -51,6 +59,6 @@ public abstract class Heroi extends Personagem {
     public void setAtributos(int ataque, int defesa, int saude){
         super.setAtaque(ataque);
         super.setDefesa(defesa);
-        super.setSaude(saude);
+        super.setVidaAtual(saude);
     }
 }
