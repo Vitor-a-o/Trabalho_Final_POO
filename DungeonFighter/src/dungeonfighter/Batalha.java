@@ -4,21 +4,21 @@
  */
 package dungeonfighter;
 
-import java.awt.BorderLayout;
+import java.util.Random;
+import java.lang.Math;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.Image;
+import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.Random;
-import java.lang.Math;
 import javax.imageio.ImageIO;
-import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -33,163 +33,98 @@ public class Batalha extends JFrame {
     private Random random;
     private boolean usouEspecial;
     private int turnosEspecial;
-    private boolean batalhaAtiva;
     // controla quantos turnos ainda tem pra usar o especial
     // 2 para o guerreiro, 1 para o barbaro
-    
+    private Image imagemHeroi;
+    private Image imagemMonstro;
+    private boolean batalhaAtiva;
     private JLabel vidaMonstro;
     private JLabel vida;
     
-    public Batalha(Heroi heroi, Monstro monstro) {
+    public Batalha(Heroi heroi, Monstro monstro, ImageIcon imagemHeroi) {
         this.heroi = heroi;
         this.monstro = monstro;
         this.random = new Random();
         this.usouEspecial = false;
         this.batalhaAtiva = true;
+        this.imagemHeroi = imagemHeroi.getImage();
         
         setTitle("Batalha");
-        
+
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setSize(Toolkit.getDefaultToolkit().getScreenSize());
-        setLayout(new BorderLayout());
-        
-        // textos informativos:  
-                  
-        JPanel painelTextos = new JPanel();
-        painelTextos.setLayout(new BoxLayout(painelTextos, BoxLayout.Y_AXIS));
-        
-        JLabel ataque = new JLabel("Ataque: " + heroi.getAtaque());
-        JLabel defesa = new JLabel("Defesa: " + heroi.getDefesa());
-        vida = new JLabel("Vida: " + heroi.getVidaAtual());
-        Font fonte = new Font("Arial", Font.BOLD, 20); 
-        ataque.setFont(fonte);
-        defesa.setFont(fonte);
-        vida.setFont(fonte);
-        ataque.setHorizontalAlignment(JLabel.CENTER);
-        defesa.setHorizontalAlignment(JLabel.CENTER);
-        vida.setHorizontalAlignment(JLabel.CENTER);
-        painelTextos.add(ataque);
-        painelTextos.add(defesa);
-        painelTextos.add(vida);
-        
-        JPanel painelEsquerdo = new JPanel();
-        painelEsquerdo.setLayout(new BoxLayout(painelEsquerdo, BoxLayout.Y_AXIS));
-        painelEsquerdo.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        painelEsquerdo.add(painelTextos); 
-       
-        JPanel painelTextosMonstro = new JPanel();
-        painelTextosMonstro.setLayout(new BoxLayout(painelTextosMonstro, BoxLayout.Y_AXIS));
-        
-        JLabel ataqueMonstro = new JLabel("Ataque: " + monstro.getAtaque());
-        JLabel defesaMonstro = new JLabel("Defesa: " + monstro.getDefesa());
-        vidaMonstro = new JLabel("Vida: " + monstro.getVidaAtual());
-        ataqueMonstro.setFont(fonte);
-        defesaMonstro.setFont(fonte);
-        vidaMonstro.setFont(fonte);
-        ataqueMonstro.setHorizontalAlignment(JLabel.CENTER);
-        defesaMonstro.setHorizontalAlignment(JLabel.CENTER);
-        vidaMonstro.setHorizontalAlignment(JLabel.CENTER);
-        painelTextosMonstro.add(ataqueMonstro);
-        painelTextosMonstro.add(defesaMonstro);
-        painelTextosMonstro.add(vidaMonstro);
-        
-        JPanel painelDireito = new JPanel();
-        painelDireito.setLayout(new BoxLayout(painelDireito, BoxLayout.Y_AXIS));
-        painelDireito.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        painelDireito.add(painelTextosMonstro); 
-        
-        BufferedImage imagemHeroi = null;
+        setLayout(new GridBagLayout());
 
-        try {   
-            imagemHeroi = ImageIO.read(new File(System.getProperty("user.dir") + "/DungeonFighter/src/heroi.jpg"));
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.exit(1);
-        }
-        
-        JPanel painelHeroi = new JPanel();
-        painelHeroi.setLayout(new BorderLayout());
-        JLabel labelHeroi = new JLabel();
-        painelHeroi.add(labelHeroi, BorderLayout.CENTER);
-        Image imagemRedimensionadaHeroi = imagemHeroi.getScaledInstance(300, 150, Image.SCALE_SMOOTH);
-        ImageIcon imagemHeroiIcone = new ImageIcon(imagemRedimensionadaHeroi);
-        labelHeroi.setIcon(imagemHeroiIcone);
-        
-        painelEsquerdo.add(painelHeroi);
-        
-        JLabel labelTituloHeroi = new JLabel(heroi.getNome());
-        labelTituloHeroi.setFont(new Font("Arial", Font.BOLD, 20));
-        labelTituloHeroi.setHorizontalAlignment(JLabel.CENTER);
-        painelEsquerdo.add(labelTituloHeroi);
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.insets = new Insets(10, 10, 10, 10);
 
-        add(painelEsquerdo, BorderLayout.WEST);
-        
-        BufferedImage imagemMonstro = null;
+        // textos informativos do herói:
+        JPanel painelTextos = new JPanel(new GridBagLayout());
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.gridwidth = 1;
+        gbc.gridheight = 1;
+        addTextLabel(painelTextos, "Ataque: " + heroi.getAtaque(), gbc);
+        gbc.gridy++;
+        addTextLabel(painelTextos, "Defesa: " + heroi.getDefesa(), gbc);
+        gbc.gridy++;
+        vida = addTextLabel(painelTextos, "Vida: " + heroi.getVidaAtual(), gbc);
+        add(painelTextos, gbc);
+
+        // painel da imagem do herói e do nome:
+        JPanel painelHeroi = criarPainelImagem(this.imagemHeroi, heroi.getNome());
+
+        // adicionando o painel à interface:
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.gridwidth = 1;
+        gbc.gridheight = 2;
+        add(painelHeroi, gbc);
+
+        // textos informativos do monstro:
+        JPanel painelTextosMonstro = new JPanel(new GridBagLayout());
+        gbc.gridx = 2;
+        gbc.gridy = 0;
+        gbc.gridwidth = 1;
+        gbc.gridheight = 1;
+        addTextLabel(painelTextosMonstro, "Ataque: " + monstro.getAtaque(), gbc);
+        gbc.gridy++;
+        addTextLabel(painelTextosMonstro, "Defesa: " + monstro.getDefesa(), gbc);
+        gbc.gridy++;
+        vidaMonstro = addTextLabel(painelTextosMonstro, "Vida: " + monstro.getVidaAtual(), gbc);
+        add(painelTextosMonstro, gbc);
+
+        // painel da imagem do monstro e do nome:
         if(monstro instanceof Chefao){
-            try {
-                imagemMonstro = ImageIO.read(new File(System.getProperty("user.dir") + "/DungeonFighter/src/monstro.png")); // TROCAR O CAMINHO PARA A IMAGEM DO CHEFÃO
-            } catch (IOException e) {
-                e.printStackTrace();
-                System.exit(1);
-            }
+            this.imagemMonstro = new ImageIcon(System.getProperty("user.dir") + "/DungeonFighter/src/chefao.jpg").getImage();
         }else{
-            try {
-                imagemMonstro = ImageIO.read(new File(System.getProperty("user.dir") + "/DungeonFighter/src/monstro.png"));
-            } catch (IOException e) {
-                e.printStackTrace();
-                System.exit(1);
-            }
+            this.imagemMonstro = new ImageIcon(System.getProperty("user.dir") + "/DungeonFighter/src/monstro.jpg").getImage();
         }
+            
+        JPanel painelMonstro = criarPainelImagem(imagemMonstro, monstro instanceof Chefao ? "Chefão" : "Monstro");
         
-        JPanel painelMonstro = new JPanel();
-        painelMonstro.setLayout(new BorderLayout());
-        JLabel labelMonstro = new JLabel();
-        painelMonstro.add(labelMonstro, BorderLayout.CENTER);
-        Image imagemRedimensionadaMonstro = imagemMonstro.getScaledInstance(300, 150, Image.SCALE_SMOOTH);
-        ImageIcon imagemMonstroIcone = new ImageIcon(imagemRedimensionadaMonstro);
-        labelMonstro.setIcon(imagemMonstroIcone);
-        
-        painelDireito.add(painelMonstro); 
-        
-        JLabel labelTituloMonstro;
-        if(monstro instanceof Chefao){
-            labelTituloMonstro = new JLabel("Chefao");
-        }else{
-            labelTituloMonstro = new JLabel("Monstro");
-        }
-        
-        labelTituloMonstro.setFont(new Font("Arial", Font.BOLD, 20));
-        labelTituloMonstro.setHorizontalAlignment(JLabel.CENTER);
-        painelDireito.add(labelTituloMonstro);
+        gbc.gridx = 2;
+        gbc.gridy = 0;
+        gbc.gridwidth = 1;
+        gbc.gridheight = 2;
+        add(painelMonstro, gbc);
 
-        add(painelDireito, BorderLayout.EAST);
-        
-        
-         // painel dos botões:
-        JPanel painelBotoes = new JPanel();
-        painelBotoes.setLayout(new BoxLayout(painelBotoes, BoxLayout.Y_AXIS));
-        painelBotoes.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20)); // Adiciona margem para o painel
+        // painel dos botões:
+        JPanel painelBotoes = new JPanel(new GridBagLayout());
+        gbc.gridx = 1;
+        gbc.gridy = 0;
+        gbc.gridwidth = 1;
+        gbc.gridheight = 1;
+        add(painelBotoes, gbc);
 
-        
-        JButton atacar = new JButton("Atacar");
-        atacar.setPreferredSize(new Dimension(200, 100));
-        atacar.setFont(fonte);
-        painelBotoes.add(atacar);
-        
-        JButton usarHabilidade = new JButton("Habilidade especial");
-        usarHabilidade.setPreferredSize(new Dimension(200, 100));
-        usarHabilidade.setFont(fonte);
-        painelBotoes.add(usarHabilidade);
-        
-        JButton usarElixir = new JButton("Usar elixir");
-        usarElixir.setPreferredSize(new Dimension(200, 100));
-        usarElixir.setFont(fonte);
-        painelBotoes.add(usarElixir);
-        
-        JPanel painelContainer = new JPanel(new BorderLayout());
-        painelContainer.add(painelBotoes, BorderLayout.CENTER);
-        add(painelContainer, BorderLayout.CENTER);
+        // botões de ação:
+        JButton atacar = adicionarBotao(painelBotoes, "Atacar", gbc, 0);
+        JButton usarHabilidade = adicionarBotao(painelBotoes, "Habilidade especial", gbc, 1);
+        JButton usarElixir = adicionarBotao(painelBotoes, "Usar elixir", gbc, 2);
 
+        setVisible(true);
+        
         atacar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -198,8 +133,8 @@ public class Batalha extends JFrame {
                 atualizarStatus();
                 if (monstro.getVivo()){
                     JOptionPane.showMessageDialog(null, "É a vez do inimigo de atacar.");
+                    turno(monstro, heroi);
                 }
-                turno(monstro, heroi);
                 atualizarStatus();
             }
         });
@@ -216,7 +151,7 @@ public class Batalha extends JFrame {
                         JOptionPane.showMessageDialog(null, "Habilidade Especial: Postura Defensiva \nSua defesa aumentará 50% por duas rodadas.");
                         turnosEspecial = 2;
                     }
-                    if(heroi instanceof Paladino){
+                    if(heroi instanceof Mago){
                         if(heroi.getVidaAtual() + 0.5*heroi.getVidaAtual() <= heroi.getVidaTotal()){
                             heroi.setVidaAtual((int)(heroi.getVidaAtual()*1.5));
                         }else{
@@ -251,6 +186,53 @@ public class Batalha extends JFrame {
                 }
             }
         });
+    }
+
+    private JLabel addTextLabel(JPanel painel, String texto, GridBagConstraints gbc) {
+        JLabel label = new JLabel(texto);
+        label.setFont(new Font("Arial", Font.BOLD, 20));
+        label.setHorizontalAlignment(JLabel.CENTER);
+        painel.add(label, gbc);
+        return label;
+    }
+
+    private BufferedImage carregarImagem(String caminho) {
+        try {
+            return ImageIO.read(new File(System.getProperty("user.dir") + caminho));
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+        return null;
+    }
+
+    private JPanel criarPainelImagem(Image imagem, String titulo) {
+        JPanel painel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.BOTH;
+
+        JLabel labelImagem = new JLabel(new ImageIcon(imagem.getScaledInstance(300, 150, Image.SCALE_SMOOTH)));
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        painel.add(labelImagem, gbc);
+
+        JLabel labelTitulo = new JLabel(titulo);
+        labelTitulo.setFont(new Font("Arial", Font.BOLD, 20));
+        labelTitulo.setHorizontalAlignment(JLabel.CENTER);
+        gbc.gridy++;
+        painel.add(labelTitulo, gbc);
+
+        return painel;
+    }
+
+    private JButton adicionarBotao(JPanel painel, String texto, GridBagConstraints gbc, int y) {
+        JButton botao = new JButton(texto);
+        botao.setPreferredSize(new Dimension(250, 100));
+        botao.setFont(new Font("Arial", Font.BOLD, 20));
+        gbc.gridx = 0;
+        gbc.gridy = y;
+        painel.add(botao, gbc);
+        return botao;
     }
 
     public void iniciar() {

@@ -214,18 +214,38 @@ public class DungeonFighter extends JFrame implements ActionListener{
         painelBotoes.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
 
-        JButton barbaro = new JButton("Bárbaro");
-        JButton guerreiro = new JButton("Guerreiro");
-        JButton paladino = new JButton("Paladino");
+        ImageIcon barbaroicon = new ImageIcon(System.getProperty("user.dir") + "/DungeonFighter/src/barbaro.jpeg");
+        Image barbaroimg = barbaroicon.getImage().getScaledInstance(300, 500, Image.SCALE_SMOOTH);
+        barbaroicon = new ImageIcon(barbaroimg);
+
+        ImageIcon guerreiroicon = new ImageIcon(System.getProperty("user.dir") + "/DungeonFighter/src/guerreiro.jpg");
+        Image guerreiroimg = guerreiroicon.getImage().getScaledInstance(300, 500, Image.SCALE_SMOOTH);
+        guerreiroicon = new ImageIcon(guerreiroimg);
+
+        ImageIcon magoicon = new ImageIcon(System.getProperty("user.dir") + "/DungeonFighter/src/mago.jpg");
+        Image magoimg = magoicon.getImage().getScaledInstance(300, 500, Image.SCALE_SMOOTH);
+        magoicon = new ImageIcon(magoimg);
+
+        JButton barbaro = new JButton("Barbaro" ,barbaroicon);
+        barbaro.setVerticalTextPosition(SwingConstants.BOTTOM);
+        barbaro.setHorizontalTextPosition(SwingConstants.CENTER);
+
+        JButton guerreiro = new JButton("Guerreiro", guerreiroicon);
+        guerreiro.setVerticalTextPosition(SwingConstants.BOTTOM);
+        guerreiro.setHorizontalTextPosition(SwingConstants.CENTER);
+
+        JButton mago = new JButton("Mago", magoicon);
+        mago.setVerticalTextPosition(SwingConstants.BOTTOM);
+        mago.setHorizontalTextPosition(SwingConstants.CENTER);
         
         Font fonte = new Font("Arial", Font.BOLD, 20); 
         barbaro.setFont(fonte);
         guerreiro.setFont(fonte);
-        paladino.setFont(fonte);
+        mago.setFont(fonte);
         
-        barbaro.setPreferredSize(new Dimension(300, 100));
-        guerreiro.setPreferredSize(new Dimension(300, 100));
-        paladino.setPreferredSize(new Dimension(300, 100));
+        barbaro.setPreferredSize(new Dimension(300, 550));
+        guerreiro.setPreferredSize(new Dimension(300, 550));
+        mago.setPreferredSize(new Dimension(300, 550));
 
         JPanel painelNorte = new JPanel(new BorderLayout());
         painelNorte.setBorder(BorderFactory.createEmptyBorder(50, 20, 20, 20)); // margens: cima, esquerda, baixo, direita
@@ -249,13 +269,13 @@ public class DungeonFighter extends JFrame implements ActionListener{
         // botão sair:
         gbc.gridx = 2;
         gbc.gridy = 0;
-        painelBotoes.add(paladino, gbc);
+        painelBotoes.add(mago, gbc);
         frame.add(painelBotoes, BorderLayout.CENTER);
 
         // descrições das classes:
         JPanel painelDescricoes = new JPanel(new BorderLayout());
         JLabel labelEsquerda = new JLabel("Habilidade especial do Bárbaro: GOLPE FURIOSO (Desfere um ataque que causa 50% a mais de dano)", SwingConstants.CENTER);
-        JLabel labelCentro = new JLabel("Habilidade especial do Paladino: RECUPERAÇÃO (Recupera 50% dos seus pontos de vida totais)", SwingConstants.CENTER);
+        JLabel labelCentro = new JLabel("Habilidade especial do Mago: RECUPERAÇÃO (Recupera 50% dos seus pontos de vida totais)", SwingConstants.CENTER);
         JLabel labelDireita = new JLabel("Habilidade especial do Guerreiro: POSTURA DEFENSIVA (Aumenta sua defesa em 50% durante duas rodadas)", SwingConstants.CENTER);
         labelEsquerda.setFont(fonte);
         labelCentro.setFont(fonte);
@@ -289,9 +309,9 @@ public class DungeonFighter extends JFrame implements ActionListener{
             }
         });
 
-        paladino.addActionListener(new ActionListener(){
+        mago.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e){
-                heroi[0] = new Paladino(nome);
+                heroi[0] = new Mago(nome);
                 frame.dispose();
             }
         });

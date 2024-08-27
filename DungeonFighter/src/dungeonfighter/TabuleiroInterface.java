@@ -20,6 +20,7 @@ import javax.tools.Tool;
 
 public class TabuleiroInterface extends JFrame {
     private JButton[][] botoes;
+    private ImageIcon heroiIcon;
     private TabuleiroMatriz implementacaoTabuleiro; 
     private Heroi heroithis;
     private int xHeroi, yHeroi;
@@ -65,6 +66,30 @@ public class TabuleiroInterface extends JFrame {
         frameOpcoes.setLayout(null);
         frameOpcoes.setSize(400, 400);
 
+        // icone do heroi
+        //tamanho do icone do heroi
+        int tamanhoIcone = 115;
+
+        if(heroithis instanceof Barbaro){
+
+            this.heroiIcon = new ImageIcon(System.getProperty("user.dir") + "/DungeonFighter/src/barbaro.jpeg");
+            Image heroiimg = heroiIcon.getImage().getScaledInstance(tamanhoIcone, tamanhoIcone, Image.SCALE_SMOOTH);
+            this.heroiIcon = new ImageIcon(heroiimg);
+
+        }if(heroithis instanceof Guerreiro){
+
+            this.heroiIcon = new ImageIcon(System.getProperty("user.dir") + "/DungeonFighter/src/guerreiro.jpg");
+            Image heroiimg = heroiIcon.getImage().getScaledInstance(tamanhoIcone, tamanhoIcone, Image.SCALE_SMOOTH);
+            this.heroiIcon = new ImageIcon(heroiimg);
+
+        }else{
+
+            this.heroiIcon = new ImageIcon(System.getProperty("user.dir") + "/DungeonFighter/src/mago.jpg");
+            Image heroiimg = heroiIcon.getImage().getScaledInstance(tamanhoIcone, tamanhoIcone, Image.SCALE_SMOOTH);
+            this.heroiIcon = new ImageIcon(heroiimg);
+
+        }
+
         // botão de reiniciar
         JButton botaoReiniciar = new JButton("Reiniciar");
         botaoReiniciar.setBounds(150, 50, 100, 50);
@@ -78,7 +103,7 @@ public class TabuleiroInterface extends JFrame {
                 }if(heroithis instanceof Guerreiro){
                     copiaHeroi = new Guerreiro(heroithis.getNome());
                 }else{
-                    copiaHeroi = new Paladino(heroithis.getNome());
+                    copiaHeroi = new Mago(heroithis.getNome());
                 }
 
                 implementacaoTabuleiro.setTabuleiro(tabuleiro.getTabuleiro());
@@ -146,7 +171,7 @@ public class TabuleiroInterface extends JFrame {
         }if(heroithis instanceof Guerreiro){
             textoSuperior = new JLabel("Classe: Guerreiro", SwingConstants.CENTER);
         }else{
-            textoSuperior = new JLabel("Classe: Paladino", SwingConstants.CENTER);
+            textoSuperior = new JLabel("Classe: Mago", SwingConstants.CENTER);
         }
         textoSuperior.setFont(new Font("Arial", Font.BOLD, 30));
         add(textoSuperior, BorderLayout.NORTH);
@@ -198,9 +223,9 @@ public class TabuleiroInterface extends JFrame {
                             }
                         }
                         if(temArmadilha){
-                            JOptionPane.showMessageDialog(null, "Na linha " + linha + ", tem pelo menos uma armadilha.");
+                            JOptionPane.showMessageDialog(null, "Na linha " + (linha + 1) + ", tem pelo menos uma armadilha.");
                         }else{
-                            JOptionPane.showMessageDialog(null, "Na linha " + linha + ", nao tem nenhuma armadilha.");
+                            JOptionPane.showMessageDialog(null, "Na linha " + (linha + 1) + ", nao tem nenhuma armadilha.");
                         }
                     }else{
                         int coluna = (int) (Math.random() * 10);
@@ -211,9 +236,9 @@ public class TabuleiroInterface extends JFrame {
                             }
                         }
                         if(temArmadilha){
-                            JOptionPane.showMessageDialog(null, "Na coluna " + coluna + ", tem pelo menos uma armadilha.");
+                            JOptionPane.showMessageDialog(null, "Na coluna " + (coluna + 1) + ", tem pelo menos uma armadilha.");
                         }else{
-                            JOptionPane.showMessageDialog(null, "Na coluna " + coluna + ", nao tem nenhuma armadilha.");
+                            JOptionPane.showMessageDialog(null, "Na coluna " + (coluna + 1) + ", nao tem nenhuma armadilha.");
                         }
                     }
                     heroithis.usaDica();
@@ -228,12 +253,13 @@ public class TabuleiroInterface extends JFrame {
     private void atualizarInterface() {
         for (int i = 0; i < 5; i++) {
             for (int j = 0; j < 10; j++) {
+                botoes[i][j].setIcon(null);
                 switch (implementacaoTabuleiro.getEvento(i, j)) {
                     case 0:
                         botoes[i][j].setText(""); // nada
                         break;
                     case 1:
-                        botoes[i][j].setText("H"); // herói
+                        botoes[i][j].setIcon(heroiIcon);; // herói
                         break;
                     case 2:
                         if(debug == true){
@@ -340,7 +366,7 @@ public class TabuleiroInterface extends JFrame {
                     atualizarInterface();
 
                     Monstro monstro = new MonstroNormal();
-                    Batalha batalha = new Batalha(heroithis, monstro);
+                    Batalha batalha = new Batalha(heroithis, monstro, heroiIcon);
 
                     SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
                         @Override
@@ -395,7 +421,7 @@ public class TabuleiroInterface extends JFrame {
 
                     atualizarInterface();
                     Monstro monstro = new Chefao();
-                    Batalha batalha = new Batalha(heroithis, monstro);
+                    Batalha batalha = new Batalha(heroithis, monstro, heroiIcon);
                     
                     SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
                         @Override
